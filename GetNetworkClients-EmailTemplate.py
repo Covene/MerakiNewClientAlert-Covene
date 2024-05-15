@@ -126,16 +126,7 @@ while True:
         writer.writerows(rows)  # Write the sorted rows
 
     # Print a success message
-    print(f"{formatted_time}:[API]All csv files containing 'NewClients.csv' in the name have been successfully combined into 'New-Clients.csv'.")
-
-
-
-    
-
-    #EMAIL SECTION BELOW
-
-
-    time.sleep(1)
+    print(f"{formatted_time}:[API]All csv files containing 'NewClients.csv' in the name have been combined into 'New-Clients.csv'.")
 
     print(f"{formatted_time}:[API]Checking if file needs to be emailed...")
 
@@ -144,27 +135,24 @@ while True:
 
     file_path = "New-Clients.csv"
     initial_mtime = os.path.getmtime(file_path)
-
-
-    
     current_time = datetime.now()
     current_size = os.path.getsize(file_path)
     current_mtime = os.path.getmtime(file_path)
+
     if current_size > initial_size:
         # File size has changed and the last update was within the last 210 seconds, send the email
         with open(file_path, "r") as file:
             file_contents = file.read()
-
         file_bytes_b64 = base64.b64encode(bytes(file_contents, 'utf-8'))
-        print(f'[Email-Section] File change detected at {formatted_time}. Attempting to Send email..........................................................................')
+        print(f'[Email-Section] File change detected at {formatted_time}. Attempting to Send email...')
         def main():
             try:
                 connection_string=os.environ["Azure Communication Resource"]
                 client = EmailClient.from_connection_string(connection_string)
                 message = {
-                    "senderAddress": "DoNotReply@bmusselman.com",
+                    "senderAddress": "DoNotReply@DOMAIN.com",
                     "recipients":  {
-                        "to": [{"address": "astanton@covene.com" }],
+                        "to": [{"address": "ENTER EMAIL YOU WANT TO SEND TO HERE" }], #UPDATE THIS to the email address you want to send to. 
                     },
                     "content": {
                         "subject": " New Client Connected To The Network",
