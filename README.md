@@ -15,8 +15,13 @@ This script will utilize the Meraki API to pull network client data, store it in
 
 
 ## Instructions
-You must first obtain your organizations ORG ID, and Network ID. You can use the Get-OrgID.py script to obtain your ORG ID, and the Get-NetworkIDs.py file to get all network IDs in your organization. The Get-NetworkClients python script assumes you have successfully ran the Get-NetworkIDs.py file. 
+You must first obtain your organizations ORG ID, and Network ID. You can use the Get-OrgID.py script to obtain your ORG ID, and the Get-NetworkIDs.py file to get all network IDs in your organization. The Get-NetworkClients python script assumes you have successfully ran the Get-NetworkIDs.py file. See Assumptions above for more information. To use this script, you will also need to configure the following in Azure:
+- Communication Resource
+- A Verified Domain
+- Connect a verified email domain
+- Obtain and store your Azure Communication Resource URL in the script.
 
+You may also use another Email solution, such as [Google's Gmail](https://mailtrap.io/blog/python-send-email-gmail/).
 Once you have the Get-NetworkIDs.py file ran successfully, you may run the Covene-GetNetworkClients-Email-Alert-Template.py script. You can download the **new-clients.csv** in this repository, for use to run along with the GetNetworkClients script. 
 
 This is the file that gets emailed when a new client is found. You will need to edit a few sections of this script for it to run, including:
@@ -53,6 +58,7 @@ This script in the current form will work fine for small to medium sized organiz
 - [Azure Communication Email client library for Python](https://learn.microsoft.com/en-us/python/api/overview/azure/communication-email-readme?view=azure-python/)
 - [Overview of Azure Communication Services email](https://learn.microsoft.com/en-us/azure/communication-services/concepts/email/email-overview)
 - [Email domains and sender authentication for Azure Communication Services](https://learn.microsoft.com/en-us/azure/communication-services/concepts/email/email-domain-and-sender-authentication)
+- [How to connect a verified email domain](https://learn.microsoft.com/en-us/azure/communication-services/quickstarts/email/connect-email-communication-resource?pivots=azure-portal)
 - [Meraki Dashboard API Python Library](https://developer.cisco.com/meraki/api-v1/python/)
 - [Get Network Clients - Meraki Dashboard API v1 - Cisco Meraki Developer Hub](https://developer.cisco.com/meraki/api-v1/get-network-clients/)
 - [Meraki GitHub](https://github.com/meraki/dashboard-api-python/blob/main/README.md)
