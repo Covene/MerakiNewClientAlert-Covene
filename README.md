@@ -17,8 +17,8 @@ This script will utilize the Meraki API to pull network client data, store it in
 ## Instructions
 You must first obtain your organizations ORG ID, and Network ID. You can use the Get-OrgID.py script to obtain your ORG ID, and the Get-NetworkIDs.py file to get all network IDs in your organization. The Get-NetworkClients python script assumes you have successfully ran the Get-NetworkIDs.py file. See Assumptions above for more information. To use this script, you will also need to configure the following in Azure:
 - Communication Resource
-- A Verified Domain
-- Connect a verified email domain
+- Email Communication Resource
+- A Verified Domain or free azure domain.
 - Obtain and store your Azure Communication Resource URL in the script.
 
 You may also use another Email solution, such as [Google's Gmail](https://mailtrap.io/blog/python-send-email-gmail/).
@@ -31,7 +31,7 @@ This is the file that gets emailed when a new client is found. You will need to 
 - Email Settings
     - Your connection string is obtained from Azure- see Azure communication services email doc below.
         - connection_string=os.environ["Azure Communication Resource"] 
-    - DoNotReply@DOMAIN.com
+    - Edit your sender address- replace DoNotReply@DOMAIN.com
     - "to": [{"address": "ENTER EMAIL YOU WANT TO SEND TO HERE" }],
 
 ### Python Dependencies
