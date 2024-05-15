@@ -14,7 +14,11 @@ This script will utilize the Meraki API to pull network client data, storer it i
 
 
 ## Instructions
-You can download the new-clients.csv in this directory, for use to run along with this script. This is the file that gets emailed when a new client is found.
+You can download the new-clients.csv in this directory, for use to run along with this script. This is the file that gets emailed when a new client is found. You will need to edit a few sections of this script for it to run, including:
+- API Key
+- ORG ID
+- connection_string=os.environ["Azure Communication Resource"]
+- Timezone
 
 ### Python Dependencies
 - Use PIP install command to download each Python package:
