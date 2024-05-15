@@ -23,12 +23,12 @@ while True:
     file_path = "New-Clients.csv"
     initial_size = os.path.getsize(file_path)
     
-    #Update the API Key within the  quotes below
+    #Implement your own API key here. Use API_Key=os.environ["MERAKI_DASHBOARD_API_KEY"] to use an envionment variable. Replace the quoted text with your environment variable name. 
     API_Key=os.environ["MERAKI_DASHBOARD_API_KEY"] 
 
     dashboard = meraki.DashboardAPI(API_Key)
 
-    #Update your ORG ID value below.
+    #Edit the org ID with the company you want to pull the networks for.
     org_id = os.environ["org_id"] 
 
     #Opens the networkID response from the first blogpost. 
