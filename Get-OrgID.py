@@ -1,7 +1,7 @@
 import meraki
 import json
 
-#Implement your own API key here. Use API_Key=os.environ["MERAKI_DASHBOARD_API_KEY"] to use an envionment variable.
+#Implement your own API key here. Use API_Key=os.environ["MERAKI_DASHBOARD_API_KEY"] to use an envionment variable. Replace the quoted text with your environment variable name. 
 API_Key='UPDATE this to either an environment variable, or your api key.'
 
 
