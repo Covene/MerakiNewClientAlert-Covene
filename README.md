@@ -8,7 +8,7 @@ This script will utilize the Meraki API to pull network client data, storer it i
     - Other third-party email servers would also be acceptable but will not be covered in this script. 
 - Time is formatted to USA Centeral Timezone.
 - You want to re-run the get network clients check every 15 minutes.
-- This script will loop with the time.sleep function. You could remove this and schedule the script to run with another system, such as task scheduler. 
+- This script will loop with the time.sleep function. You could remove this use a cron job, or windows task scheduler- which may be a better long term option. 
 - You have environment variables configured, that store your Meraki ORG ID, and Meraki API. 
 - You have a file named **'NetworkIDresponse.json'** created. See blog post at - [Covene.com](https://covene.com/news-blog/)  for information on how to create this. 
 
