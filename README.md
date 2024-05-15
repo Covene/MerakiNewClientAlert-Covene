@@ -21,7 +21,7 @@ You can download the new-clients.csv in this directory, for use to run along wit
 - Timezone
 
 ### Python Dependencies
-- Use PIP install command to download each Python package:
+**Use PIP install command to download each Python package**:
 - meraki
 - pytz
 - pandas
