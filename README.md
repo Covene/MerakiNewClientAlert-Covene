@@ -10,11 +10,11 @@ This script will utilize the Meraki API to pull network client data, storer it i
 - You want to re-run the get network clients check every 15 minutes.
 - This script will loop with the time.sleep function. You could remove this and schedule the script to run with another system, such as task scheduler. 
 - You have environment variables configured, that store your Meraki ORG ID, and Meraki API. 
-- You have a file named 'NetworkIDresponse.json' created. See blog post at - [Covene.com](https://covene.com/news-blog/)  for information on how to create this. 
+- You have a file named **'NetworkIDresponse.json'** created. See blog post at - [Covene.com](https://covene.com/news-blog/)  for information on how to create this. 
 
 
 ## Instructions
-You can download the new-clients.csv in this directory, for use to run along with this script. This is the file that gets emailed when a new client is found. You will need to edit a few sections of this script for it to run, including:
+You can download the **new-clients.csv** in this directory, for use to run along with this script. This is the file that gets emailed when a new client is found. You will need to edit a few sections of this script for it to run, including:
 - API Key
 - ORG ID
 - connection_string=os.environ["Azure Communication Resource"]
