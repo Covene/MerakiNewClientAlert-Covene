@@ -15,6 +15,8 @@ This script will utilize the Meraki API to pull network client data, store it in
 
 
 ## Instructions
+You must first obtain your organizations ORG ID, and Network ID. You can use the Get-OrgID.py script to obtain your ORG ID, and the Get-NetworkIDs.py file to get all network IDs in your organization. The Get-NetworkClients python script assumes you have successfully ran the get-networkIDs.py file. 
+
 You can download the **new-clients.csv** in this directory, for use to run along with this script. This is the file that gets emailed when a new client is found. You will need to edit a few sections of this script for it to run, including:
 - API Key
 - ORG ID
