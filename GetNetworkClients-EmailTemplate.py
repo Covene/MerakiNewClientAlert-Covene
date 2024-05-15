@@ -49,7 +49,6 @@ while True:
         
         print(f'[API]*********{network_name} API Request Completed. Please wait while the .CSV output files are created.....*********')
             
-            
         # Open the Newly Created JSON file
         with open(f'{network_name}-response.json', 'r') as f:
             data = json.load(f)
@@ -85,11 +84,8 @@ while True:
             rows.sort(key=lambda x: datetime.strptime(x[8], "%m-%d-%Y %H:%M:%S"), reverse=True)
             for row in rows:
                 writer.writerow(row)
-
-
     current_time = datetime.now()
     formatted_time = current_time.strftime("%H:%M:%S")
-
 
     # Get all csv files in the current directory
     csv_files = [f for f in os.listdir() if f.endswith('.csv') and 'NewClients' in f]
@@ -170,7 +166,6 @@ while True:
                                         }
                                     ]
                                 }
-
                 poller = client.begin_send(message)
                 result = poller.result()
             except Exception as ex:
@@ -185,12 +180,10 @@ while True:
         initial_mtime = current_mtime  # Update the initial modification time
         print(f"{formatted_time}:[Email-Section] Script waiting 15 minutes before checking database once more....")
         time.sleep(900)
-
     else:
         current_time = datetime.now()
         formatted_time = current_time.strftime("%H:%M:%S")
         print(f"{formatted_time}:[Email-Section] {file_path} File Size has not changed. Supressing duplicate Email alert notification.")
-        
         print(f"{formatted_time}:[Email-Section] Script waiting 15 Minutes before checking again....")
         time.sleep(900)
 
