@@ -39,6 +39,14 @@ This is the file that gets emailed when a new client is found. You will need to 
 - azure.core
 - azure.identity
 
+### Improvments To Be Made
+This script in the current form will work fine for small to medium sized organizations, however it does require many file read/write operations that could be reduced heavily. With a large number of networks for an organization, the read/write operations can be burdensome. Other items that may be useful for this script include:
+- Use pandas library more effectively for csv manipulation, such as built-in sorting/filtering.
+- Modularization: Break down the script into functions or classes to improve modularity. This makes the code easier to read and maintain.
+- Exception Handling: Implement try-except blocks to handle potential exceptions that could occur during API calls or file operations.
+- Update Mechanism: Implement a mechanism to check for updates or patches to dependencies, ensuring the script remains compatible with new versions of libraries.
+
+
 ### Reference Guides
 - [Azure Communication Email client library for Python](https://learn.microsoft.com/en-us/python/api/overview/azure/communication-email-readme?view=azure-python/)
 - [Overview of Azure Communication Services email](https://learn.microsoft.com/en-us/azure/communication-services/concepts/email/email-overview)
