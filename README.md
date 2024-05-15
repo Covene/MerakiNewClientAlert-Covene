@@ -1,6 +1,6 @@
 #  Meraki - New Client Joined The Network Email Alert - Covene
 ## Script
-This script will utilize the Meraki API to pull network client data, storer it in a .JSON file, then sorts the data to find clients that have a first connected date that matches todays date. It then will create a .csv file and add entries to the file each time a new client connects to the network. The script checks if the new clients csv file has increased in size (aka a new client was found), and if so it utilizes Microsoft Azure to send an email notifying you that a new client was detected. It attaches the updated .csv file. 
+This script will utilize the Meraki API to pull network client data, store it in a .JSON file, then sorts the data to find clients that have a first connected date that matches todays date. It then will create a .csv file and add entries to the file each time a new client connects to the network. The script checks if the new clients csv file has increased in size (aka a new client was found), and if so it utilizes Microsoft Azure to send an email notifying you that a new client was detected. It attaches the updated .csv file. 
 ## Assumptions
 
 - Email Integration setup with Microsoft Azure.
