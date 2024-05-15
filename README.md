@@ -45,6 +45,8 @@ This script in the current form will work fine for small to medium sized organiz
 - Modularization: Break down the script into functions or classes to improve modularity. This makes the code easier to read and maintain.
 - Exception Handling: Implement try-except blocks to handle potential exceptions that could occur during API calls or file operations.
 - Update Mechanism: Implement a mechanism to check for updates or patches to dependencies, ensuring the script remains compatible with new versions of libraries.
+- As stated above, it may be more reliable to utilize windows task scheduler or cron jobs instead of the built in while true loop for continued monitoring of new clients.
+
 
 
 ### Reference Guides
