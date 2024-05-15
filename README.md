@@ -20,7 +20,8 @@ You can download the **new-clients.csv** in this directory, for use to run along
 - ORG ID
 - Timezone
 - Email Settings
-    - connection_string=os.environ["Azure Communication Resource"]
+    - Your connection string is obtained from Azure- see Azure communication services email doc below.
+        - connection_string=os.environ["Azure Communication Resource"] 
     - DoNotReply@DOMAIN.com
     - "to": [{"address": "ENTER EMAIL YOU WANT TO SEND TO HERE" }],
 
