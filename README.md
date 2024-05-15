@@ -39,7 +39,7 @@ This is the file that gets emailed when a new client is found. You will need to 
 - azure.core
 - azure.identity
 
-### Improvments To Be Made
+### Improvements To Be Made
 This script in the current form will work fine for small to medium sized organizations, however it does require many file read/write operations that could be reduced heavily. With a large number of networks for an organization, the read/write operations can be burdensome. Other items that may be useful for this script include:
 - Use pandas library more effectively for csv manipulation, such as built-in sorting/filtering.
 - Modularization: Break down the script into functions or classes to improve modularity. This makes the code easier to read and maintain.
