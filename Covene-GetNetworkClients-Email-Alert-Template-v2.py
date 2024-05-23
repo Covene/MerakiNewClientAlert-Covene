@@ -4,15 +4,9 @@ import time
 import os
 import pytz
 import base64
-import glob
-import re
 import csv
 import pandas as pd
-import azure.communication.email
-import azure.identity
 from azure.communication.email import EmailClient
-from azure.core.credentials import AzureKeyCredential
-from azure.identity import DefaultAzureCredential
 from datetime import datetime
 
 #Creates a loop that the script will repeat after running through all indented code. 
@@ -165,7 +159,7 @@ while True:
                 connection_string=os.environ["Azure Communication Resource"]
                 client = EmailClient.from_connection_string(connection_string)
                 message = {
-                    "senderAddress": "DoNotReply@DOMAIN.com",
+                    "senderAddress": "DoNotReply@DOMAIN.com", #UPDATE THIS to the sender email created in your azure Email Communication Service.
                     "recipients":  {
                         "to": [{"address": "ENTER EMAIL YOU WANT TO SEND TO HERE" }], #UPDATE THIS to the email address you want to send to. 
                     },
