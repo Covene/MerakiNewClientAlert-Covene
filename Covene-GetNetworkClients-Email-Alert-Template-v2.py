@@ -17,7 +17,7 @@ while True:
     file_path = "New-Clients.csv"
     initial_size = os.path.getsize(file_path)
     
-    #Implement your own API key here. Use API_Key=os.environ["MERAKI_DASHBOARD_API_KEY"] to use an envionment variable. Replace the quoted text with your environment variable name. 
+    #Replace the quoted text with your environment variable name. Use API_Key="PasteAPIKeyHere" if you do not want to use an environment variable. 
     API_Key=os.environ["MERAKI_DASHBOARD_API_KEY"] 
 
     dashboard = meraki.DashboardAPI(API_Key)
