@@ -1,6 +1,6 @@
 #  Meraki - New Client Joined The Network Email Alert - Covene
 ## Script
-For more detailed instructions, see the two blog posts at [Covene.com](https://covene.com/news-blog/). This will help setup Python, your virtual environment, and getting the required data and files.
+For more detailed instructions, see the two blog posts at [Covene.com](https://covene.com/gather-network-clients-pt-1/). This will help setup Python, your virtual environment, and getting the required data and files.
 
 This script will utilize the Meraki API to pull network client data, store it in a .JSON file, then sorts the data to find clients that have a first connected date that matches todays date. It then will create a .csv file and add entries to the file each time a new client connects to the network. The script checks if the new clients csv file has increased in size (aka a new client was found), and if so it utilizes Microsoft Azure to send an email notifying you that a new client was detected. It attaches the updated .csv file. 
 ## Assumptions
@@ -13,7 +13,7 @@ This script will utilize the Meraki API to pull network client data, store it in
 - You want to re-run the get network clients check every 15 minutes.
 - This script will loop with the time.sleep function. You could remove this use a cron job, or windows task scheduler- which may be a better long term option. 
 - You have [environment variables](https://www.freecodecamp.org/news/python-env-vars-how-to-get-an-environment-variable-in-python/) configured, that store your Meraki ORG ID, and Meraki API. 
-- You have a file named **'NetworkIDresponse.json'** created, that contains a list of network IDs. This can be obtained through a get networks API call. See blog post at - [Covene.com](https://covene.com/news-blog/)  for information on how to create this. 
+- You have a file named **'NetworkIDresponse.json'** created, that contains a list of network IDs. This can be obtained through a get networks API call. See blog post at - [Covene.com](https://covene.com/gather-network-clients-pt-1/)  for information on how to create this. 
 
 
 ## Instructions
@@ -24,12 +24,12 @@ You must first obtain your organizations ORG ID, and Network ID. You can use the
 - Obtain and store your Azure Communication Resource URL in the script.
 
 You may also use another Email solution, such as [Google's Gmail](https://mailtrap.io/blog/python-send-email-gmail/).
-Once you have the Get-NetworkIDs.py file ran successfully, you may run the Covene-GetNetworkClients-Email-Alert-Template.py script. You can download the **new-clients.csv** in this repository, for use to run along with the GetNetworkClients script. 
+Once you have the Get-NetworkIDs.py file ran successfully, you may run the Covene-GetNetworkClients-Email-Alert-Template.py script. You can download the **new-clients.csv** in this repository, for use to run along with the GetNetworkClients script.This is the file that gets emailed when a new client is found. 
 
-This is the file that gets emailed when a new client is found. You will need to edit a few sections of this script for it to run, including:
-- API Key
-- ORG ID
-- Timezone
+ You will need to edit a few sections of this script for it to run, including:
+- API_Key=
+- ORG ID =
+- Timezone Settings
 - Email Settings
     - Your connection string is obtained from Azure- see Azure communication services email doc below.
         - connection_string=os.environ["Azure Communication Resource"] 
