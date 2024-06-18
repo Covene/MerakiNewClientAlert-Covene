@@ -53,6 +53,7 @@ The Get Network Clients script was created by a Network Engineer by trade, and n
 - Exception Handling: Implement try-except blocks to handle potential exceptions that could occur during API calls or file operations.
 - Update Mechanism: Implement a mechanism to check for updates or patches to dependencies, ensuring the script remains compatible with new versions of libraries.
 - As stated above, it may be more reliable to utilize windows task scheduler or cron jobs instead of the built in while true loop for continued monitoring of new clients.
+- At Times, you will get a random 503 error from Meraki when the dashoard does not respond in time, or if they are having issues. The script provided has no mechanism to re-start itself, or notify you that is has stopped running. 
 
 
 
