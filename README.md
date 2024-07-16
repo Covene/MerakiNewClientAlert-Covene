@@ -48,6 +48,9 @@ Once you have the Get-NetworkIDs.py file ran successfully, you may run the Coven
 
 ### Improvements To Be Made
 The Get Network Clients script was created by a Network Engineer by trade, and not a python developer. AS a result, while this code functions, there is room for improvements. This script in the current form will work fine for small to medium sized organizations, however it does require many file read/write operations that could be reduced heavily. With a large number of networks for an organization, the read/write operations can be burdensome. Other items that may be useful for this script include:
+- Add in Python functions for each portion of the script, for better readability and testing.
+- Add the get networks API to run in the same script. 
+- The script can be modified so it doesn't create and edit files. The information can be stored in memory.
 - Use pandas library more effectively for csv manipulation, such as built-in sorting/filtering.
 - Modularization: Break down the script into functions or classes to improve modularity. This makes the code easier to read and maintain.
 - Exception Handling: Implement try-except blocks to handle potential exceptions that could occur during API calls or file operations.
