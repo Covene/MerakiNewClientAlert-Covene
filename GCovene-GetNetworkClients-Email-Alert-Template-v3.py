@@ -27,7 +27,7 @@ def get_env_variable(var_name):
 
 
 # UPDATE THESE TO MATCH YOUR ENVIRONMENT:
-API_Key = get_env_variable("LEXICON_API_KEY")
+API_Key = get_env_variable("API_KEY")
 csv_file_path = 'NewClients.csv'
 
 # Initial file size
