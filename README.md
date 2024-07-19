@@ -9,51 +9,80 @@ This script will utilize the Meraki API to pull network client data, store it in
     - This requires a paid account with microsoft.
     - Other third-party email servers would also be acceptable but will not be covered in this script. 
     - See reference guides below for instructions on how to configure the Azure integration.
-- Time is formatted to USA Centeral Timezone.
-- You want to re-run the get network clients check every 15 minutes.
-- This script will loop with the time.sleep function. You could remove this use a cron job, or windows task scheduler- which may be a better long term option. 
-- You have [environment variables](https://www.freecodecamp.org/news/python-env-vars-how-to-get-an-environment-variable-in-python/) configured, that store your Meraki ORG ID, and Meraki API. 
-- You have a file named **'NetworkIDresponse.json'** created, that contains a list of network IDs. This can be obtained through a get networks API call. See blog post at - [Covene.com](https://covene.com/gather-network-clients-pt-1/)  for information on how to create this. 
+- You want to re-run the get network clients check every x minutes. (change the variable Sleeptime=x to change how long to wait between re-tries.) 
+- You have [environment variables](https://www.freecodecamp.org/news/python-env-vars-how-to-get-an-environment-variable-in-python/) configured, that store your Meraki API Key, and Azure communication resource string. 
+
 
 
 ## Instructions
-You must first obtain your organizations ORG ID, and Network ID. You can use the Get-OrgID.py script to obtain your ORG ID, and the Get-NetworkIDs.py file to get all network IDs in your organization. The Get-NetworkClients python script assumes you have successfully ran the Get-NetworkIDs.py file. See Assumptions above for more information. To use this script, you will also need to configure the following in Azure:
+ To use this script, you will  need to configure the following in Azure:
 - Communication Resource
 - Email Communication Resource
 - A Verified Domain or free azure domain.
 - Obtain and store your Azure Communication Resource URL in the script.
 
 You may also use another Email solution, such as [Google's Gmail](https://mailtrap.io/blog/python-send-email-gmail/).
-Once you have the Get-NetworkIDs.py file ran successfully, you may run the Covene-GetNetworkClients-Email-Alert-Template.py script. You can download the **new-clients.csv** in this repository, for use to run along with the GetNetworkClients script.This is the file that gets emailed when a new client is found. 
+
 
  You will need to edit a few sections of this script for it to run, including:
 - API_Key=
-- ORG ID =
-- Timezone Settings
 - Email Settings
     - Your connection string is obtained from Azure- see Azure communication services email doc below.
         - connection_string=os.environ["Azure Communication Resource"] 
     - Edit your sender address- replace DoNotReply@DOMAIN.com
     - "to": [{"address": "ENTER EMAIL YOU WANT TO SEND TO HERE" }],
 
+### Organizations
+If your API key has access to more than one organization, this script will by default choose the first returned Organization. 
+
+In the GetOrgID function, see the following section:
+
+    if orgresponse:
+            OrganizationID = orgresponse[0]["id"]
+            OrgName = orgresponse[0]["name"]
+
+To Change the ORG ID, run the script and you will be presented with the full list of ORG's available. Example:
+
+    The Script will continue for the following ORG: ORG0 with organization ID: 697526.
+
+
+    2024-07-19 14:17:59,630 - INFO - Other Possible ORGs returned from API Call include:
+    2024-07-19 14:17:59,630 - INFO - 1: ORG0
+    2024-07-19 14:17:59,630 - INFO - 2: ORG1
+    2024-07-19 14:17:59,630 - INFO - 3: ORG2
+    2024-07-19 14:17:59,631 - INFO - 4: ORG3
+    2024-07-19 14:17:59,631 - INFO - 5: ORG4
+    2024-07-19 14:17:59,631 - INFO - 6: ORG5
+    2024-07-19 14:17:59,631 - INFO - 7: ORG6
+    2024-07-19 14:17:59,631 - INFO - 8: ORG7
+    2024-07-19 14:17:59,631 - INFO - 9: ORG8
+    2024-07-19 14:17:59,632 - INFO - 10: ORG9
+
+
+From the example above, the script will default to running the API request against Org0 (which is just a made up name for an organization). If you wish to run the API call against Org7 for example, update the code as follows: 
+
+    if orgresponse:
+            OrganizationID = orgresponse[7]["id"]
+            OrgName = orgresponse[7]["name"]
+
+
+### Exclude Guest Networks
+This cript has an option to exclude clients that connect to guest networks. In the script, search for: 
+
+    if is_today and client.get("ssid") != "GuestNetwork":
+
+Replace the "GuestNetwork" with the name of the guest network you would like to add. You can also include more than one guest network name by adding another and statment like so:
+
+    if is_today and client.get("ssid") != "GuestNetwork" and client.get("ssid") != "GuestNetwork2":
+
+
 ### Python Dependencies
-**Use PIP install command to download each Python package**:
-- meraki
-- pytz
-- pandas
-- azure.communication.email
-- azure.identity
-- azure.core
-- azure.identity
+**Use pip install -r requirements.txt command to download each Python package**:
+
+Ensure you download the requirements.txt file, and then run pip install -r requirements.txt. Eack required package will be downloaded.
 
 ### Improvements To Be Made
-The Get Network Clients script was created by a Network Engineer by trade, and not a python developer. AS a result, while this code functions, there is room for improvements. This script in the current form will work fine for small to medium sized organizations, however it does require many file read/write operations that could be reduced heavily. With a large number of networks for an organization, the read/write operations can be burdensome. Other items that may be useful for this script include:
-- Add in Python functions for each portion of the script, for better readability and testing.
-- Add the get networks API to run in the same script. 
-- The script can be modified so it doesn't create and edit files. The information can be stored in memory.
-- Use pandas library more effectively for csv manipulation, such as built-in sorting/filtering.
-- Modularization: Break down the script into functions or classes to improve modularity. This makes the code easier to read and maintain.
-- Exception Handling: Implement try-except blocks to handle potential exceptions that could occur during API calls or file operations.
+The Get Network Clients script was created by a Network Engineer by trade, and not a python developer. AS a result, while this code functions, there is room for improvements. Items that may be useful for this script include:
 - Update Mechanism: Implement a mechanism to check for updates or patches to dependencies, ensuring the script remains compatible with new versions of libraries.
 - As stated above, it may be more reliable to utilize windows task scheduler or cron jobs instead of the built in while true loop for continued monitoring of new clients.
 - At Times, you will get a random 503 error from Meraki when the dashoard does not respond in time, or if they are having issues. The script provided has no mechanism to re-start itself, or notify you that is has stopped running. 

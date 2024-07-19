@@ -1,0 +1,9 @@
+meraki
+pandas
+pytz
+Requests
+schedule
+tzlocal
+azure.communication.email
+azure.core
+

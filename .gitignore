@@ -1,0 +1,4 @@
+
+.DS_Store
+meraki_api__log__*
+*.json

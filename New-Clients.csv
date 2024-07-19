@@ -1,1 +1,1 @@
-Network Name,MAC,Description,IP Address,Connection Type,Connected To,SSID,Switchport,Time
+Network Name,Client ID,Description,IP Address,MAC Address,SSID,VLAN,Switchport,First Seen Time(local),Recent Device,Recent Device Name,Is First Seen Today
