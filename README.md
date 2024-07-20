@@ -20,6 +20,8 @@ This script will utilize the Meraki API to pull network client data, then sorts 
 - A Verified Domain or free azure domain.
 - Obtain and store your Azure Communication Resource URL in the script.
 
+See the references at the bottom of this file to review instructions on creating azure communication resources and setting up a domain. 
+
 You may also use another Email solution, such as [Google's Gmail](https://mailtrap.io/blog/python-send-email-gmail/).
 
 
@@ -81,7 +83,13 @@ Replace the "GuestNetwork" with the name of the wireless guest network you would
 ### Python Dependencies
 **Use pip install -r requirements.txt command to download each Python package**:
 
-Ensure you download the requirements.txt file, and then run pip install -r requirements.txt. Eack required package will be downloaded.
+Ensure you download the requirements.txt file, and then run pip install -r requirements.txt. Eack required package will be downloaded. The requirements.txt file contains all the packages used by the script. 
+
+Please note that a [virtual environment](https://docs.python.org/3/library/venv.html) will help isolate package dependencies, and ensure each package is found by the IDE.
+
+Also, you may need to change your python interpreter to use the virtual environment with CTRL + SHIFT + P and search Python: Select Interpreter. Ensure the virtual environment is chosen. 
+
+Finally, this script was built on python 3. 
 
 ### Improvements To Be Made
 The Get Network Clients script was created by a Network Engineer by trade, and not a python developer. As a result, while this code functions, there is room for improvements. Items that may be useful for this script include:
@@ -96,6 +104,7 @@ The Get Network Clients script was created by a Network Engineer by trade, and n
 ### Reference Guides
 - [Azure Communication Email client library for Python](https://learn.microsoft.com/en-us/python/api/overview/azure/communication-email-readme?view=azure-python/)
 - [Overview of Azure Communication Services email](https://learn.microsoft.com/en-us/azure/communication-services/concepts/email/email-overview)
+- [Quickstart For Azure Communication Service](https://learn.microsoft.com/en-us/azure/communication-services/quickstarts/email/create-email-communication-resource?pivots=platform-azp)
 - [Email domains and sender authentication for Azure Communication Services](https://learn.microsoft.com/en-us/azure/communication-services/concepts/email/email-domain-and-sender-authentication)
 - [How to connect a verified email domain](https://learn.microsoft.com/en-us/azure/communication-services/quickstarts/email/connect-email-communication-resource?pivots=azure-portal)
 - [Meraki Dashboard API Python Library](https://developer.cisco.com/meraki/api-v1/python/)
