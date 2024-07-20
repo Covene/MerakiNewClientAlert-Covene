@@ -151,7 +151,7 @@ def FindNewClients(network_clients_data, csv_file_path):
                 is_today = first_seen_local.date() == today_local
 
                 #update your Guest Network(s) Here If you Would Like To Exclude notifications for new  clients on the guest network.
-                if is_today and client.get("ssid") != "GuestNetwork":
+                if is_today and client.get("ssid") != "Guest!Network":
                     client_info = {
                         "Network Name": network_name,
                         "Client ID": client.get("id"),

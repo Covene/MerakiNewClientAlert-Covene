@@ -2,7 +2,8 @@
 ## Script
 For more detailed instructions, see the two blog posts at [Covene.com](https://covene.com/gather-network-clients-pt-1/). This will help setup Python, your virtual environment, and getting the required data and files.
 
-This script will utilize the Meraki API to pull network client data, store it in a .JSON file, then sorts the data to find clients that have a first connected date that matches todays date. It then will create a .csv file and add entries to the file each time a new client connects to the network. The script checks if the new clients csv file has increased in size (aka a new client was found), and if so it utilizes Microsoft Azure to send an email notifying you that a new client was detected. It attaches the updated .csv file. 
+This script will utilize the Meraki API to pull network client data, then sorts the data to find clients that have a first connected date that matches todays date. It then will create a .csv file and add entries to the file each time a new client connects to the network. The script checks if the new clients csv file has increased in size (aka a new client was found), and if so it utilizes Microsoft Azure to send an email notifying you that a new client was detected. It attaches the updated .csv file. 
+
 ## Assumptions
 
 - Email Integration setup with Microsoft Azure.
@@ -11,8 +12,6 @@ This script will utilize the Meraki API to pull network client data, store it in
     - See reference guides below for instructions on how to configure the Azure integration.
 - You want to re-run the get network clients check every x minutes. (change the variable Sleeptime=x to change how long to wait between re-tries.) 
 - You have [environment variables](https://www.freecodecamp.org/news/python-env-vars-how-to-get-an-environment-variable-in-python/) configured, that store your Meraki API Key, and Azure communication resource string. 
-
-
 
 ## Instructions
  To use this script, you will  need to configure the following in Azure:
@@ -65,13 +64,16 @@ From the example above, the script will default to running the API request again
             OrganizationID = orgresponse[7]["id"]
             OrgName = orgresponse[7]["name"]
 
+### Networks
+The GetNetworkIDs function will show the networks that it is going to pull from. There is currently no mechanism to pick and chose the networks you want to be alerted on. This may change with future updates, but for now all networks are included. 
+
 
 ### Exclude Guest Networks
-This cript has an option to exclude clients that connect to guest networks. In the script, search for: 
+This cript has an Capibility to exclude clients that connect to guest networks. In the script, search for: 
 
     if is_today and client.get("ssid") != "GuestNetwork":
 
-Replace the "GuestNetwork" with the name of the guest network you would like to add. You can also include more than one guest network name by adding another and statment like so:
+Replace the "GuestNetwork" with the name of the wireless guest network you would like to exclude from alerting. You can also exclude more than one guest network name by adding another and statment like so:
 
     if is_today and client.get("ssid") != "GuestNetwork" and client.get("ssid") != "GuestNetwork2":
 
@@ -82,10 +84,12 @@ Replace the "GuestNetwork" with the name of the guest network you would like to 
 Ensure you download the requirements.txt file, and then run pip install -r requirements.txt. Eack required package will be downloaded.
 
 ### Improvements To Be Made
-The Get Network Clients script was created by a Network Engineer by trade, and not a python developer. AS a result, while this code functions, there is room for improvements. Items that may be useful for this script include:
+The Get Network Clients script was created by a Network Engineer by trade, and not a python developer. As a result, while this code functions, there is room for improvements. Items that may be useful for this script include:
+- JSON files are created but not really required. They are there mosyly to provide you with the raw data from the API request. Feel free to tweak and remove the json files from being used. 
 - Update Mechanism: Implement a mechanism to check for updates or patches to dependencies, ensuring the script remains compatible with new versions of libraries.
 - As stated above, it may be more reliable to utilize windows task scheduler or cron jobs instead of the built in while true loop for continued monitoring of new clients.
 - At Times, you will get a random 503 error from Meraki when the dashoard does not respond in time, or if they are having issues. The script provided has no mechanism to re-start itself, or notify you that is has stopped running. 
+- There is no option to specify what networks you want to include or exclude. All networks in a meraki org will be included in the API currently. 
 
 
 
