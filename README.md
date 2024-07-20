@@ -33,6 +33,7 @@ You may also use another Email solution, such as [Google's Gmail](https://mailtr
     - Edit your sender address- replace DoNotReply@DOMAIN.com
     - "to": [{"address": "ENTER EMAIL YOU WANT TO SEND TO HERE" }],
 
+
 ### Organizations
 If your API key has access to more than one organization, this script will by default choose the first returned Organization. 
 
@@ -65,6 +66,8 @@ From the example above, the script will default to running the API request again
     if orgresponse:
             OrganizationID = orgresponse[7]["id"]
             OrgName = orgresponse[7]["name"]
+
+If you only have access to 1 organization, the script will not show the above messaging and proceed with the Organization.
 
 ### Networks
 The GetNetworkIDs function will show the networks that it is going to pull from. There is currently no mechanism to pick and chose the networks you want to be alerted on. This may change with future updates, but for now all networks are included. 
