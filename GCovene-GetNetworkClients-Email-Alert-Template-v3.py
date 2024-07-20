@@ -18,7 +18,7 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 logging.getLogger('azure').setLevel(logging.WARNING)
 logging.getLogger('azure.communication.email').setLevel(logging.WARNING)
 
-def get_env_variable(var_name):
+def get_env_variable(var_name): #Function that will get the environment variable from the system. This is used to get the API Key and Azure Communication Resource values.
     try:
         return os.environ[var_name]
     except KeyError:
@@ -45,7 +45,7 @@ except OSError as e:
 
 
 
-def GetOrgID(api_key):
+def GetOrgID(api_key): #This function will get the organization ID(s) that the API Key can access. This is required to run the GetNetworkIDs function.
     dashboard = meraki.DashboardAPI(api_key)
     orgresponse = dashboard.organizations.getOrganizations()
     if orgresponse:
@@ -58,8 +58,8 @@ def GetOrgID(api_key):
             logging.info("Other Possible ORGs returned from API Call include:")
             for i, org in enumerate(orgresponse[1:], start=1):
                 logging.info(f"{i}: {org['name']}")
-            logging.info("Pausing to confirm. CTRL + C to Abort...")
-            time.sleep(5)
+            logging.info("Pausing to confirm. CTRL + C to Abort...") #You can remove this line if you are sure of the ORG ID you want to use.
+            time.sleep(10)  #You can remove this line if you are sure of the ORG ID you want to use.
         else:
             logging.info("This is the only ORG ID found by the API call.")
         
@@ -70,8 +70,9 @@ def GetOrgID(api_key):
 
 
 
-
-def GetNetworkIDs(api_key, OrganizationID, OrgName):
+#This function will get all network IDs for the organization. 
+# This is required to run the GetNetworkClients function.
+def GetNetworkIDs(api_key, OrganizationID, OrgName): 
     logging.info(f"Getting network IDs for organization: {OrgName} (ID: {OrganizationID})")
     dashboard = meraki.DashboardAPI(api_key)
     networkresponse = dashboard.organizations.getOrganizationNetworks(OrganizationID)
@@ -88,7 +89,7 @@ def GetNetworkIDs(api_key, OrganizationID, OrgName):
 
 
 
-
+#This function will get all network clients for the ech network returned in the GetNetworkIDs function.
 def GetNetworkClients(network_dict, api_key):
     output_file = "network_clients_data.json"
     dashboard = meraki.DashboardAPI(api_key)
@@ -123,7 +124,7 @@ def GetNetworkClients(network_dict, api_key):
     return network_clients_data
 
 
-
+#This function will convert the UTC time to local time.
 def convert_to_local_time(utc_time_str):
     utc_time = datetime.strptime(utc_time_str, "%Y-%m-%dT%H:%M:%SZ")
     local_tz = get_localzone()
@@ -131,7 +132,7 @@ def convert_to_local_time(utc_time_str):
     return local_time
 
 
-
+#This function will filter the new clients that have connected to the network today, for the first time.
 def FindNewClients(network_clients_data, csv_file_path):
     FilteredClientData = "Filtered_Client_data.json"
     NewClientInfo = []
@@ -163,7 +164,6 @@ def FindNewClients(network_clients_data, csv_file_path):
                         "First Seen Time(local)": readable_first_seen,
                         "Recent Device": client.get("recentDeviceConnection"),
                         "Recent Device Name": client.get("recentDeviceName"),
-                        "Is First Seen Today": is_today
                     }
                     NewClientInfo.append(client_info)
 
@@ -200,7 +200,7 @@ def FindNewClients(network_clients_data, csv_file_path):
 
 
 
-
+#This function will send an email to the recipient with the new client data attached.
 def EmailNewClients(csv_file_path, initial_size, current_size, OrgName):
     if current_size > initial_size:
         with open(csv_file_path, "r") as file:
@@ -241,10 +241,10 @@ def EmailNewClients(csv_file_path, initial_size, current_size, OrgName):
         except Exception as ex:
             logging.error(f"Failed to send email: {ex}")
     else:
-        logging.info("No new clients detected today. No email sent.")
+        logging.info("No new clients detected. No email sent.")
 
 
-
+#This is the main function that will run the script. It will call all the functions above.
 def main():
     global initial_size
     while True:
@@ -260,7 +260,7 @@ def main():
                     EmailNewClients(csv_file_path, initial_size, current_size, OrgName)
                     initial_size = current_size
         
-        Sleeptime=120
+        Sleeptime = 120
         logging.info(f"Script run complete. Sleeping for {Sleeptime} seconds...")
         time.sleep(Sleeptime)
 

@@ -59,7 +59,7 @@ To Change the ORG ID, run the script and you will be presented with the full lis
     2024-07-19 14:17:59,632 - INFO - 10: ORG9
 
 
-From the example above, the script will default to running the API request against Org0 (which is just a made up name for an organization). If you wish to run the API call against Org7 for example, update the code as follows: 
+From the example above, the script will default to running the API request against Org0. If you wish to run the API call against Org7 for example, update the code as follows: 
 
     if orgresponse:
             OrganizationID = orgresponse[7]["id"]
