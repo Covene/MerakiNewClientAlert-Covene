@@ -76,11 +76,11 @@ The GetNetworkIDs function will show the networks that it is going to pull from.
 ### Exclude Guest Networks
 This cript has an Capibility to exclude clients that connect to guest networks. In the script, search for: 
 
-    if is_today and client.get("ssid") != "GuestNetwork":
+    if is_today and client.get("ssid") != "Guest!Network":
 
-Replace the "GuestNetwork" with the name of the wireless guest network you would like to exclude from alerting. You can also exclude more than one guest network name by adding another and statment like so:
+Replace the "Guest!Network" with the name of the wireless guest network you would like to exclude from alerting. You can also exclude more than one guest network name by adding another and statment like so:
 
-    if is_today and client.get("ssid") != "GuestNetwork" and client.get("ssid") != "GuestNetwork2":
+    if is_today and client.get("ssid") != "Guest!Network" and client.get("ssid") != "GuestNetwork2":
 
 
 ### Python Dependencies

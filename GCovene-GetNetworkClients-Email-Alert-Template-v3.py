@@ -30,18 +30,17 @@ def get_env_variable(var_name): #Function that will get the environment variable
 API_Key = get_env_variable("API_KEY")
 csv_file_path = 'NewClients.csv'
 
-# Check file size with improved error handling
-try:
-    # Check if the file exists to avoid FileNotFoundError
-    if os.path.exists(csv_file_path):
-        initial_size = os.path.getsize(csv_file_path)
-        logging.info(f"The file {csv_file_path} initial size is {initial_size} bytes")
-    else:
-        logging.warning(f"The file {csv_file_path} does not exist. Please check the file path.")
-except OSError as e:
-    # Handle other potential errors like permission issues
-    logging.error(f"Error accessing file {csv_file_path}: {e}. Please check file permissions and path.")
 
+def check_file_size(csv_file_path):
+    try:
+        if os.path.exists(csv_file_path):
+            return os.path.getsize(csv_file_path)
+        else:
+            logging.warning(f"The file {csv_file_path} does not exist. Please check the file path.")
+            return 0
+    except OSError as e:
+        logging.error(f"Error accessing file {csv_file_path}: {e}. Please check file permissions and path.")
+        return 0
 
 
 
@@ -246,19 +245,27 @@ def EmailNewClients(csv_file_path, initial_size, current_size, OrgName):
 
 #This is the main function that will run the script. It will call all the functions above.
 def main():
-    global initial_size
     while True:
         logging.info("Starting script run...")
+        
+        # Check the file size at the start of the loop
+        start_size = check_file_size(csv_file_path)
         
         OrganizationID, OrgName = GetOrgID(API_Key)
         if OrganizationID:
             network_dict = GetNetworkIDs(API_Key, OrganizationID, OrgName)
             if network_dict:
                 network_clients_data = GetNetworkClients(network_dict, API_Key)
-                NewClientInfo, current_size = FindNewClients(network_clients_data, csv_file_path)
-                if NewClientInfo:
-                    EmailNewClients(csv_file_path, initial_size, current_size, OrgName)
-                    initial_size = current_size
+                NewClientInfo = FindNewClients(network_clients_data, csv_file_path)
+                
+                # Check the file size after the operations
+                end_size = check_file_size(csv_file_path)
+                
+                # Compare the start and end file sizes
+                if end_size > start_size:
+                    EmailNewClients(csv_file_path, start_size, end_size, OrgName)
+                else:
+                    logging.info(f"File size not increased. Inital size: {start_size}. End size: {end_size}")
         
         Sleeptime = 120
         logging.info(f"Script run complete. Sleeping for {Sleeptime} seconds...")
