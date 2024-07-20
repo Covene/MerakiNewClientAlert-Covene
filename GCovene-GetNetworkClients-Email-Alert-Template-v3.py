@@ -30,9 +30,17 @@ def get_env_variable(var_name):
 API_Key = get_env_variable("API_KEY")
 csv_file_path = 'NewClients.csv'
 
-# Initial file size
-initial_size = os.path.getsize(csv_file_path) if os.path.exists(csv_file_path) else 0
-logging.info(f"The file {csv_file_path} initial size is {initial_size} bytes")
+# Check file size with improved error handling
+try:
+    # Check if the file exists to avoid FileNotFoundError
+    if os.path.exists(csv_file_path):
+        initial_size = os.path.getsize(csv_file_path)
+        logging.info(f"The file {csv_file_path} initial size is {initial_size} bytes")
+    else:
+        logging.warning(f"The file {csv_file_path} does not exist. Please check the file path.")
+except OSError as e:
+    # Handle other potential errors like permission issues
+    logging.error(f"Error accessing file {csv_file_path}: {e}. Please check file permissions and path.")
 
 
 
