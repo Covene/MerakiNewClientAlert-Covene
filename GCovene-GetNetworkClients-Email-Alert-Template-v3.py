@@ -10,86 +10,84 @@ import csv
 from azure.communication.email import EmailClient
 from azure.core.credentials import AzureKeyCredential
 import base64
+import urllib3
+import custom_logger
 
+logger = custom_logger.setup_logger('Meraki', 'Meraki-API-Logs.log')
 
 
 # Set up logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-logging.getLogger('azure').setLevel(logging.WARNING)
-logging.getLogger('azure.communication.email').setLevel(logging.WARNING)
+def setup_logger():
+    # Setup the logger
+    logger = custom_logger.setup_logger('Meraki', 'Meraki-API-Logs.log')
+    return logger
 
-def get_env_variable(var_name): #Function that will get the environment variable from the system. This is used to get the API Key and Azure Communication Resource values.
+#Function that will get the environment variable from the system. This is used to get the API Key and Azure Communication Resource values.
+def get_env_variable(var_name,logger):
     try:
         return os.environ[var_name]
     except KeyError:
-        logging.error(f"Environment variable {var_name} not found. Please see: https://www.twilio.com/en-us/blog/how-to-set-environment-variables-html. Be sure to restart your IDE after adding an environment variable.")
+        logger.error(f"Environment variable {var_name} not found. Please see: https://www.twilio.com/en-us/blog/how-to-set-environment-variables-html. Be sure to restart your IDE after adding an environment variable")
         exit(1)
 
-
 # UPDATE THESE TO MATCH YOUR ENVIRONMENT:
-API_Key = get_env_variable("API_KEY")
+API_Key = get_env_variable("API_Key", logger)
 csv_file_path = 'NewClients.csv'
 
 
-def check_file_size(csv_file_path):
+#function that checks if the file size of the .csv has increased. 
+def check_file_size(csv_file_path,logger):
     try:
         if os.path.exists(csv_file_path):
             return os.path.getsize(csv_file_path)
         else:
-            logging.warning(f"The file {csv_file_path} does not exist. Please check the file path.")
+            logger.warning(f"The file {csv_file_path} does not exist. Please check the file path.")
             return 0
     except OSError as e:
-        logging.error(f"Error accessing file {csv_file_path}: {e}. Please check file permissions and path.")
+        logger.error(f"Error accessing file {csv_file_path}: {e}. Please check file permissions and path.")
         return 0
 
-
-
-def GetOrgID(api_key): #This function will get the organization ID(s) that the API Key can access. This is required to run the GetNetworkIDs function.
+#This function will get the organization ID(s) that the API Key can access. This is required to run the GetNetworkIDs function.
+def GetOrgID(api_key,logger):
     dashboard = meraki.DashboardAPI(api_key)
     orgresponse = dashboard.organizations.getOrganizations()
     if orgresponse:
         OrganizationID = orgresponse[0]["id"]
         OrgName = orgresponse[0]["name"]
 
-        logging.info(f"\n\nThe Script will continue for the following ORG: {OrgName} with organization ID: {OrganizationID}.\n\n")
+        logger.info(f"\n\nThe Script will continue for the following ORG: {OrgName} with organization ID: {OrganizationID}.\n\n")
         time.sleep(2)
-        if len(orgresponse) > 1:
-            logging.info("Other Possible ORGs returned from API Call include:")
-            for i, org in enumerate(orgresponse[1:], start=1):
-                logging.info(f"{i}: {org['name']}")
-            logging.info("Pausing to confirm. CTRL + C to Abort...") #You can remove this line if you are sure of the ORG ID you want to use.
-            time.sleep(10)  #You can remove this line if you are sure of the ORG ID you want to use.
+        if len(orgresponse) > 1:                        #You can remove this section if you are sure of the ORG ID you want to use.
+            logger.info("Other Possible ORGs returned from API Call include:") 
+            for i, org in enumerate(orgresponse[1:], start=1): 
+                logger.info(f"{i}: {org['name']}")
+            logger.info("Pausing to confirm. CTRL + C to Abort...")
+            time.sleep(8)
         else:
-            logging.info("This is the only ORG ID found by the API call.")
+            logger.info("This is the only ORG ID found by the API call.")  #This is the end of the section that can be removed if you are sure of the ORG ID you want to use.
         
         return OrganizationID, OrgName
     else:
-        logging.error("No organizations found in the response.")
+        logger.error("No organizations found in the response.")
         return None, None
 
-
-
-#This function will get all network IDs for the organization. 
-# This is required to run the GetNetworkClients function.
-def GetNetworkIDs(api_key, OrganizationID, OrgName): 
-    logging.info(f"Getting network IDs for organization: {OrgName} (ID: {OrganizationID})")
+#Gets the Network ID's for the ORG ID that was returned from the GetOrgID function. This is required to run the GetNetworkClients function.
+def GetNetworkIDs(api_key, OrganizationID, OrgName,logger):
+    logger.info(f"Getting network IDs for organization: {OrgName} (ID: {OrganizationID})")
     dashboard = meraki.DashboardAPI(api_key)
     networkresponse = dashboard.organizations.getOrganizationNetworks(OrganizationID)
     
     if not networkresponse:
-        logging.error("No networks found for the organization.")
+        logger.error("No networks found for the organization.")
         return {}
     
     network_dict = {network.get('id'): network.get('name') for network in networkresponse if network.get('id') and network.get('name')}
     
-    logging.info(f"The API will gather network client information for the following Networks:\n {json.dumps(network_dict, indent=4)}\n")
-    time.sleep(1)
+    logger.info(f"The API will gather network client information for the following Networks:\n {json.dumps(network_dict, indent=4)}\n")
     return network_dict
 
-
-
-#This function will get all network clients for the ech network returned in the GetNetworkIDs function.
-def GetNetworkClients(network_dict, api_key):
+#This function will get the network clients for the network ID's that were returned from the GetNetworkIDs function.
+def GetNetworkClients(network_dict, api_key,logger):
     output_file = "network_clients_data.json"
     dashboard = meraki.DashboardAPI(api_key)
     
@@ -100,7 +98,7 @@ def GetNetworkClients(network_dict, api_key):
         network_clients_data = {}
 
     for network_id, network_name in network_dict.items():
-        logging.info(f"\n\n*********Running API GET for {network_name} (ID: {network_id})*********\n")
+        logger.info(f"**Running API GET for {network_name} (ID: {network_id})*")
         try:
             response = dashboard.networks.getNetworkClients(
                 network_id, timespan=86400, perPage=5000
@@ -111,65 +109,68 @@ def GetNetworkClients(network_dict, api_key):
                 "clients": response
             }
 
-            with open(output_file, 'w') as file:
-                json.dump(network_clients_data, file, indent=4)
-           
-            logging.info(f"Gathering Network clients for {network_name}")
+            try:
+                with open(output_file, 'w') as file:
+                    json.dump(network_clients_data, file, indent=4)
+                logger.info(f"Gathered Network clients for {network_name}")
+            except Exception as e:
+                logger.error(f"An error occurred while writing network clients data to file: {e}")
 
         except meraki.exceptions.APIError as e:
-            logging.error(f"API error occurred for network {network_name}: {e}")
+            logger.error(f"API error occurred for network {network_name}: {e}")
         except Exception as e:
-            logging.error(f"An error occurred for network {network_name}: {e}")
+            logger.error(f"An error occurred for network {network_name}: {e}")
     return network_clients_data
 
-
-#This function will convert the UTC time to local time.
+#This function will convert the UTC time to local time. This is used to convert the first seen time of the client to local time.
 def convert_to_local_time(utc_time_str):
     utc_time = datetime.strptime(utc_time_str, "%Y-%m-%dT%H:%M:%SZ")
     local_tz = get_localzone()
     local_time = utc_time.replace(tzinfo=pytz.utc).astimezone(local_tz)
     return local_time
 
-
-#This function will filter the new clients that have connected to the network today, for the first time.
-def FindNewClients(network_clients_data, csv_file_path):
+#This function will filter the client data to only include clients that have connected to the network today and are not on the Guest Network.
+def FindNewClients(network_clients_data, csv_file_path,logger):
     FilteredClientData = "Filtered_Client_data.json"
     NewClientInfo = []
 
-    for network_id, network_data in network_clients_data.items():
-        network_name = network_data.get("network_name", "Unknown Network")
-        clients = network_data.get("clients", [])
+    try:
+        for network_id, network_data in network_clients_data.items():
+            network_name = network_data.get("network_name", "Unknown Network")
+            clients = network_data.get("clients", [])
 
-        for client in clients:
-            first_seen_utc = client.get("firstSeen")
-            if first_seen_utc:
-                first_seen_local = convert_to_local_time(first_seen_utc)
-                readable_first_seen = first_seen_local.strftime("%Y-%m-%d %H:%M:%S")
+            for client in clients:
+                first_seen_utc = client.get("firstSeen")
+                if first_seen_utc:
+                    first_seen_local = convert_to_local_time(first_seen_utc)
+                    readable_first_seen = first_seen_local.strftime("%Y-%m-%d %H:%M:%S")
 
-                today_local = datetime.now(get_localzone()).date()
-                is_today = first_seen_local.date() == today_local
+                    today_local = datetime.now(get_localzone()).date()
+                    is_today = first_seen_local.date() == today_local
+                    #update your Guest Network Here
+                    if is_today and client.get("ssid") != "Guest!Network":
+                        client_info = {
+                            "Network Name": network_name,
+                            "Client ID": client.get("id"),
+                            "Description": client.get("description"),
+                            "IP Address": client.get("ip"),
+                            "MAC Address": client.get("mac"),
+                            "SSID": client.get("ssid"),
+                            "VLAN": client.get("vlan"),
+                            "Switchport": client.get("switchport"),
+                            "First Seen Time(local)": readable_first_seen,
+                            "Recent Device": client.get("recentDeviceConnection"),
+                            "Recent Device Name": client.get("recentDeviceName"),
+                        }
+                        NewClientInfo.append(client_info)
 
-                #update your Guest Network(s) Here If you Would Like To Exclude notifications for new  clients on the guest network.
-                if is_today and client.get("ssid") != "Guest!Network":
-                    client_info = {
-                        "Network Name": network_name,
-                        "Client ID": client.get("id"),
-                        "Description": client.get("description"),
-                        "IP Address": client.get("ip"),
-                        "MAC Address": client.get("mac"),
-                        "SSID": client.get("ssid"),
-                        "VLAN": client.get("vlan"),
-                        "Switchport": client.get("switchport"),
-                        "First Seen Time(local)": readable_first_seen,
-                        "Recent Device": client.get("recentDeviceConnection"),
-                        "Recent Device Name": client.get("recentDeviceName"),
-                    }
-                    NewClientInfo.append(client_info)
+        with open(FilteredClientData, 'w') as file:
+            json.dump(NewClientInfo, file, indent=4)
+            logger.info(f"Saved Filtered Client Data to {FilteredClientData}")
+            #logging.info(NewClientInfo)
 
-    with open(FilteredClientData, 'w') as file:
-        json.dump(NewClientInfo, file, indent=4)
-        logging.info(f"Saved Filtered Client Data to {FilteredClientData}")
-        logging.info(NewClientInfo)
+    except Exception as e:
+        logger.error(f"An error occurred while filtering client data: {e}")
     
     current_size = 0
     try:
@@ -181,35 +182,34 @@ def FindNewClients(network_clients_data, csv_file_path):
                 writer.writeheader()
                 writer.writerows(NewClientInfo)
 
-            logging.info(f"Data has been written to {csv_file_path}")
+            logger.info(f"Data has been written to {csv_file_path}")
             
         else:
-            logging.info("No new client data to write.")
+            logger.info("No new client data to write.")
         
         if os.path.exists(csv_file_path):
             current_size = os.path.getsize(csv_file_path)
-            logging.info(f"The Updated New Client CSV File Size Is: {current_size} bytes")
+            logger.info(f"The Updated New Client CSV File Size Is: {current_size} bytes")
         else:
-            logging.warning(f"The file {csv_file_path} does not exist after writing.")
+            logger.warning(f"The file {csv_file_path} does not exist after writing.")
     
     except Exception as e:
-        logging.error(f"Error writing to CSV: {e}")
+        logger.error(f"Error writing to CSV: {e}")
 
     return NewClientInfo, current_size
 
 
-
-#This function will send an email to the recipient with the new client data attached.
-def EmailNewClients(csv_file_path, initial_size, current_size, OrgName):
+#This function will send an email with the new client data if the file size has increased. This requires an Azure Communication Resource to be set up. See Readme for more information.
+def EmailNewClients(csv_file_path, initial_size, current_size, OrgName,logger):
     if current_size > initial_size:
         with open(csv_file_path, "r") as file:
             file_contents = file.read()
 
         file_bytes_b64 = base64.b64encode(bytes(file_contents, 'utf-8')).decode()
-        logging.info(f'File change detected. Attempting to Send email...')
+        logger.info(f'File change detected. Attempting to Send email...')
 
         try:
-            connection_string = get_env_variable("Azure Communication Resource")
+            connection_string = get_env_variable("Azure Communication Resource") #Ensure you have an environment variable called Azure Communication Resource. Restart your IDE after creating this in your environment.
             client = EmailClient.from_connection_string(connection_string)
             message = {         #Update your Sender Email ADdress Below
                 "senderAddress": "DoNotReply@domain.com",
@@ -232,43 +232,67 @@ def EmailNewClients(csv_file_path, initial_size, current_size, OrgName):
                     }
                 ]
             }
-
             poller = client.begin_send(message)
             result = poller.result()
-            logging.info(f'Email Sent Successfully.')
+            logger.info(f'Email Sent Successfully.')
         
         except Exception as ex:
-            logging.error(f"Failed to send email: {ex}")
+            logger.error(f"Failed to send email: {ex}")
     else:
-        logging.info("No new clients detected. No email sent.")
+        logger.info("No new clients detected. No email sent.")
 
 
-#This is the main function that will run the script. It will call all the functions above.
+#This function will clear the contents of the CSV file. This is done at the start of the script run to ensure that the file is empty before writing new data to it.
+def ClearCSV(csv_file_path,logger):
+    try:
+        with open(csv_file_path, 'w') as file:
+            pass  # Opening in 'w' mode already truncates the file.
+        logger.info(f"Successfully cleared the contents of {csv_file_path}")
+    except Exception as e:
+        logger.error(f"Error clearing the contents of {csv_file_path}: {e}")
+
+#This function will disable the warnings that are generated when using the verify=False parameter in the requests.get() function. This is used to suppress the warnings that are generated when using the Meraki API.
+def disable_warnings(logger):
+    try:
+        # Suppress only the single InsecureRequestWarning from urllib3 needed for verify=False
+        urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+    except Exception as e:
+        logger.error(f'An error occurred while disabling warnings: {e}')        
+
+#Main function that will run the script. This function will run the functions in the correct order to gather the data, filter the data, and send an email if new clients are detected.
 def main():
     while True:
-        logging.info("Starting script run...")
+        logger = setup_logger()
+        disable_warnings(logger)
+        csv_file_path = 'NewClients.csv'
+        logger.info("Starting script run...")
         
         # Check the file size at the start of the loop
-        start_size = check_file_size(csv_file_path)
+        start_size = check_file_size(csv_file_path,logger)
         
-        OrganizationID, OrgName = GetOrgID(API_Key)
+        # Clear the contents of the CSV file
+        ClearCSV(csv_file_path,logger)
+        ClearCSV("network_clients_data.json",logger)
+        ClearCSV("Filtered_Client_data.json",logger)
+        OrganizationID, OrgName = GetOrgID(API_Key,logger)
         if OrganizationID:
-            network_dict = GetNetworkIDs(API_Key, OrganizationID, OrgName)
+            network_dict = GetNetworkIDs(API_Key, OrganizationID, OrgName, logger)
             if network_dict:
-                network_clients_data = GetNetworkClients(network_dict, API_Key)
-                NewClientInfo = FindNewClients(network_clients_data, csv_file_path)
+                network_clients_data = GetNetworkClients(network_dict, API_Key,logger)
+                NewClientInfo = FindNewClients(network_clients_data, csv_file_path,logger)
                 
                 # Check the file size after the operations
-                end_size = check_file_size(csv_file_path)
+                end_size = check_file_size(csv_file_path,logger)
                 
                 # Compare the start and end file sizes
                 if end_size > start_size:
-                    EmailNewClients(csv_file_path, start_size, end_size, OrgName)
+                    EmailNewClients(csv_file_path, start_size, end_size, OrgName,logger)
                 else:
-                    logging.info(f"File size not increased. Inital size: {start_size}. End size: {end_size}")
+                    logger.info(f"File size not increased. Inital size: {start_size}. End size: {end_size}")
         
-        Sleeptime = 120
-        logging.info(f"Script run complete. Sleeping for {Sleeptime} seconds...")
+        #Set this value in seconds to determine how long the script will sleep before running again.
+        Sleeptime = 320
+        logger.info(f"Script run complete. Sleeping for {Sleeptime} seconds...")
         time.sleep(Sleeptime)
 
 if __name__ == "__main__":
