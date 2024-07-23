@@ -99,7 +99,8 @@ The Get Network Clients script was created by a Network Engineer by trade, and n
 - At Times, you will get a random 503 error from Meraki when the dashoard does not respond in time, or if they are having issues. The script provided has no mechanism to re-start itself, or notify you that is has stopped running. 
 - There is no option to specify what networks you want to include or exclude. All networks in a meraki org will be included in the API currently. 
 
-
+## Custom Logging
+This script now also includes custom logging to track data historically. You must have the custom_logger.py to proceed without errors. You can add the file path to the file name if you want to store this in a specific location.This logging script will rotate automatically, and only store 3 backup files. 
 
 ### Reference Guides
 - [Azure Communication Email client library for Python](https://learn.microsoft.com/en-us/python/api/overview/azure/communication-email-readme?view=azure-python/)
