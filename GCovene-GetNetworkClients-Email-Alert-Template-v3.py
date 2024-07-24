@@ -133,7 +133,8 @@ def convert_to_local_time(utc_time_str):
 def FindNewClients(network_clients_data, csv_file_path,logger):
     FilteredClientData = "Filtered_Client_data.json"
     NewClientInfo = []
-
+    today_local = datetime.now(get_localzone()).date()
+    logger.info(f"Todays date: {today_local}")
     try:
         for network_id, network_data in network_clients_data.items():
             network_name = network_data.get("network_name", "Unknown Network")
@@ -144,8 +145,7 @@ def FindNewClients(network_clients_data, csv_file_path,logger):
                 if first_seen_utc:
                     first_seen_local = convert_to_local_time(first_seen_utc)
                     readable_first_seen = first_seen_local.strftime("%Y-%m-%d %H:%M:%S")
-
-                    today_local = datetime.now(get_localzone()).date()
+                    
                     is_today = first_seen_local.date() == today_local
                     #update your Guest Network Here
                     if is_today and client.get("ssid") != "Guest!Network":
@@ -163,16 +163,17 @@ def FindNewClients(network_clients_data, csv_file_path,logger):
                             "Recent Device Name": client.get("recentDeviceName"),
                         }
                         NewClientInfo.append(client_info)
-
+                        logger.info(f"New client Detected. First seen time for Client MAC: {client.get('mac')}: {readable_first_seen}")
+                        #Uncomment the 2 lines below to see a list of all clients, regardless of first connected date. This is useful for troubleshooting. 
+                    #else: 
+                        #logger.info(f"Client MAC: {client.get('mac')}First seen on: {readable_first_seen} is not today's date.")    
         with open(FilteredClientData, 'w') as file:
             json.dump(NewClientInfo, file, indent=4)
             logger.info(f"Saved Filtered Client Data to {FilteredClientData}")
-            #logging.info(NewClientInfo)
+            
 
     except Exception as e:
         logger.error(f"An error occurred while filtering client data: {e}")
-    
-    current_size = 0
     try:
         if NewClientInfo:
             headers = NewClientInfo[0].keys()
@@ -187,59 +188,52 @@ def FindNewClients(network_clients_data, csv_file_path,logger):
         else:
             logger.info("No new client data to write.")
         
-        if os.path.exists(csv_file_path):
-            current_size = os.path.getsize(csv_file_path)
-            logger.info(f"The Updated New Client CSV File Size Is: {current_size} bytes")
-        else:
-            logger.warning(f"The file {csv_file_path} does not exist after writing.")
-    
+        
     except Exception as e:
         logger.error(f"Error writing to CSV: {e}")
 
-    return NewClientInfo, current_size
+    return NewClientInfo
 
 
 #This function will send an email with the new client data if the file size has increased. This requires an Azure Communication Resource to be set up. See Readme for more information.
 def EmailNewClients(csv_file_path, initial_size, current_size, OrgName,logger):
-    if current_size > initial_size:
-        with open(csv_file_path, "r") as file:
-            file_contents = file.read()
+    
+    with open(csv_file_path, "r") as file:
+        file_contents = file.read()
 
-        file_bytes_b64 = base64.b64encode(bytes(file_contents, 'utf-8')).decode()
-        logger.info(f'File change detected. Attempting to Send email...')
+    file_bytes_b64 = base64.b64encode(bytes(file_contents, 'utf-8')).decode()
+    logger.info(f'File change detected. Attempting to Send email...')
 
-        try:
-            connection_string = get_env_variable("Azure Communication Resource") #Ensure you have an environment variable called Azure Communication Resource. Restart your IDE after creating this in your environment.
-            client = EmailClient.from_connection_string(connection_string)
-            message = {         #Update your Sender Email ADdress Below
-                "senderAddress": "DoNotReply@domain.com",
-                "recipients":  { #Update Your Email Address Below
-                    "to": [{"address": "UpdateEmailAddressHere@domain.com" }],
-                },
-                "content": {
-                    "subject": f"{OrgName} - New Client Connected To The Network",
-                    "plainText": f"{csv_file_path} \n Access the Meraki Dashboard here: https://dashboard.meraki.com/ ",
-                    "html": f"""
-                        <html>
-                            <h1 style='font-size: 0.9em;'>A new client has connected to the {OrgName} network. See the attached file, and review in the <a href='https://dashboard.meraki.com/'>Meraki Dashboard</a></h1>
-                        </html>
-                    """},
-                "attachments": [
-                    {
-                        "name": "New-Clients.csv",
-                        "contentType": "text/csv",
-                        "contentInBase64": file_bytes_b64
-                    }
-                ]
-            }
-            poller = client.begin_send(message)
-            result = poller.result()
-            logger.info(f'Email Sent Successfully.')
-        
-        except Exception as ex:
-            logger.error(f"Failed to send email: {ex}")
-    else:
-        logger.info("No new clients detected. No email sent.")
+    try:
+        connection_string = get_env_variable("Azure Communication Resource") #Ensure you have an environment variable called Azure Communication Resource. Restart your IDE after creating this in your environment.
+        client = EmailClient.from_connection_string(connection_string)
+        message = {         #Update your Sender Email ADdress Below
+            "senderAddress": "DoNotReply@domain.com",
+            "recipients":  { #Update Your Email Address Below
+                "to": [{"address": "UpdateEmailAddressHere@domain.com" }],
+            },
+            "content": {
+                "subject": f"{OrgName} - New Client Connected To The Network",
+                "plainText": f"{csv_file_path} \n Access the Meraki Dashboard here: https://dashboard.meraki.com/ ",
+                "html": f"""
+                    <html>
+                        <h1 style='font-size: 0.9em;'>A new client has connected to the {OrgName} network. See the attached file, and review in the <a href='https://dashboard.meraki.com/'>Meraki Dashboard</a></h1>
+                    </html>
+                """},
+            "attachments": [
+                {
+                    "name": "New-Clients.csv",
+                    "contentType": "text/csv",
+                    "contentInBase64": file_bytes_b64
+                }
+            ]
+        }
+        poller = client.begin_send(message)
+        result = poller.result()
+        logger.info(f'Email Sent Successfully.')
+    
+    except Exception as ex:
+        logger.error(f"Failed to send email: {ex}")
 
 
 #This function will clear the contents of the CSV file. This is done at the start of the script run to ensure that the file is empty before writing new data to it.
