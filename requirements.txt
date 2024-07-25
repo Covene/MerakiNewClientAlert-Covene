@@ -1,9 +1,8 @@
+azure_storage
 meraki
 pandas
 pytz
-Requests
-schedule
 tzlocal
+urllib3
 azure.communication.email
-azure.core
 
