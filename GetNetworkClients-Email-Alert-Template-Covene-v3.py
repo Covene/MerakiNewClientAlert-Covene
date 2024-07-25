@@ -19,13 +19,14 @@ def get_env_variable(var_name,logger):
     except KeyError:
         logger.error(f"Environment variable {var_name} not found. Please see: https://www.twilio.com/en-us/blog/how-to-set-environment-variables-html. Be sure to restart your IDE after adding an environment variable")
         exit(1)
-        
+
+logger = custom_logger.setup_logger('Meraki', 'Meraki-API-Logs.log')
 # UPDATE THESE TO MATCH YOUR ENVIRONMENT:
 API_Key = get_env_variable("API_Key", logger)
 csv_file_path = 'NewClients.csv'
 
 
-logger = custom_logger.setup_logger('Meraki', 'Meraki-API-Logs.log')
+
 
 
 # Set up logging
