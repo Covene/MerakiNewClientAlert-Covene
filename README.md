@@ -35,6 +35,7 @@ See the references at the bottom of this file to review instructions on creating
     - Edit your sender address- replace DoNotReply@DOMAIN.com with the domain you verify, or a free azure domain.
     - "to": [{"address": "ENTER EMAIL YOU WANT TO SEND TO HERE" }],
 
+
 ### Organizations
 If your API key has access to more than one organization, this script will by default choose the first returned Organization. 
 
