@@ -15,7 +15,6 @@ import custom_logger
 
 logger = custom_logger.setup_logger('Meraki', 'Meraki-API-Logs.log')
 
-
 # Set up logging
 def setup_logger():
     # Setup the logger
@@ -27,19 +26,32 @@ def get_env_variable(var_name,logger):
     try:
         return os.environ[var_name]
     except KeyError:
-        logger.error(f"Environment variable {var_name} not found. Please see: https://www.twilio.com/en-us/blog/how-to-set-environment-variables-html. Be sure to restart your IDE after adding an environment variable")
+        logger.error(f"Environment variable '{var_name}' not found. Please see: https://www.twilio.com/en-us/blog/how-to-set-environment-variables-html. Be sure to restart your IDE after adding an environment variable")
         exit(1)
+
 
 # UPDATE THESE TO MATCH YOUR ENVIRONMENT:
 API_Key = get_env_variable("API_Key", logger)
 csv_file_path = 'NewClients.csv'
 
 
+
+
 #function that checks if the file size of the .csv has increased. 
-def check_file_size(csv_file_path,logger):
+def CheckCSVRows(csv_file_path, logger):
     try:
         if os.path.exists(csv_file_path):
-            return os.path.getsize(csv_file_path)
+            with open(csv_file_path, 'r') as file:
+                reader = csv.reader(file)
+                # Subtract 1 to exclude the header row
+                num_entries = sum(1 for row in reader)
+            if num_entries > 0:
+                num_entries -= 1
+                logger.info(f"File has {num_entries} entries.") 
+                return num_entries  
+            if num_entries == 0:
+                logger.info(f"{csv_file_path} File is empty.")
+            return num_entries
         else:
             logger.warning(f"The file {csv_file_path} does not exist. Please check the file path.")
             return 0
@@ -47,13 +59,14 @@ def check_file_size(csv_file_path,logger):
         logger.error(f"Error accessing file {csv_file_path}: {e}. Please check file permissions and path.")
         return 0
 
+
 #This function will get the organization ID(s) that the API Key can access. This is required to run the GetNetworkIDs function.
 def GetOrgID(api_key,logger):
     dashboard = meraki.DashboardAPI(api_key)
     orgresponse = dashboard.organizations.getOrganizations()
     if orgresponse:
-        OrganizationID = orgresponse[0]["id"]
-        OrgName = orgresponse[0]["name"]
+        OrganizationID = orgresponse[2]["id"]
+        OrgName = orgresponse[2]["name"]
 
         logger.info(f"\n\nThe Script will continue for the following ORG: {OrgName} with organization ID: {OrganizationID}.\n\n")
         time.sleep(2)
@@ -61,7 +74,7 @@ def GetOrgID(api_key,logger):
             logger.info("Other Possible ORGs returned from API Call include:") 
             for i, org in enumerate(orgresponse[1:], start=1): 
                 logger.info(f"{i}: {org['name']}")
-            logger.info("Pausing to confirm. CTRL + C to Abort...")
+            logger.info("Pausing to confirm. See README.MD for instructions on how to change the ORG. CTRL + C to Abort...")
             time.sleep(8)
         else:
             logger.info("This is the only ORG ID found by the API call.")  #This is the end of the section that can be removed if you are sure of the ORG ID you want to use.
@@ -70,6 +83,8 @@ def GetOrgID(api_key,logger):
     else:
         logger.error("No organizations found in the response.")
         return None, None
+
+
 
 #Gets the Network ID's for the ORG ID that was returned from the GetOrgID function. This is required to run the GetNetworkClients function.
 def GetNetworkIDs(api_key, OrganizationID, OrgName,logger):
@@ -196,7 +211,7 @@ def FindNewClients(network_clients_data, csv_file_path,logger):
 
 
 #This function will send an email with the new client data if the file size has increased. This requires an Azure Communication Resource to be set up. See Readme for more information.
-def EmailNewClients(csv_file_path, initial_size, current_size, OrgName,logger):
+def EmailNewClients(csv_file_path, OrgName,logger):
     
     with open(csv_file_path, "r") as file:
         file_contents = file.read()
@@ -205,7 +220,7 @@ def EmailNewClients(csv_file_path, initial_size, current_size, OrgName,logger):
     logger.info(f'File change detected. Attempting to Send email...')
 
     try:
-        connection_string = get_env_variable("Azure Communication Resource") #Ensure you have an environment variable called Azure Communication Resource. Restart your IDE after creating this in your environment.
+        connection_string = get_env_variable("Azure Communication Resource",logger) #Ensure you have an environment variable called Azure Communication Resource. Restart your IDE after creating this in your environment.
         client = EmailClient.from_connection_string(connection_string)
         message = {         #Update your Sender Email ADdress Below
             "senderAddress": "DoNotReply@domain.com",
@@ -261,8 +276,9 @@ def main():
         csv_file_path = 'NewClients.csv'
         logger.info("Starting script run...")
         
-        # Check the file size at the start of the loop
-        start_size = check_file_size(csv_file_path,logger)
+       # Check the file size at the start of the loop
+        start_size = CheckCSVRows(csv_file_path,logger)
+        logger.info(f"{csv_file_path} file has {start_size} entries.")
         
         # Clear the contents of the CSV file
         ClearCSV(csv_file_path,logger)
@@ -276,16 +292,16 @@ def main():
                 NewClientInfo = FindNewClients(network_clients_data, csv_file_path,logger)
                 
                 # Check the file size after the operations
-                end_size = check_file_size(csv_file_path,logger)
+                end_size = CheckCSVRows(csv_file_path,logger)
                 
                 # Compare the start and end file sizes
                 if end_size > start_size:
-                    EmailNewClients(csv_file_path, start_size, end_size, OrgName,logger)
+                    logger.info(f"File size increased. Inital size: {start_size}. End size: {end_size}.")
+                    EmailNewClients(csv_file_path, OrgName,logger)
                 else:
                     logger.info(f"File size not increased. Inital size: {start_size}. End size: {end_size}")
-        
-        #Set this value in seconds to determine how long the script will sleep before running again.
-        Sleeptime = 320
+        #Edit this to change how long the script waits before running again. The default is  800 seconds.
+        Sleeptime = 800
         logger.info(f"Script run complete. Sleeping for {Sleeptime} seconds...")
         time.sleep(Sleeptime)
 
