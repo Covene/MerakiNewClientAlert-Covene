@@ -76,14 +76,14 @@ def GetOrgID(api_key,logger):
 
         logger.info(f"\n\nThe Script will continue for the following ORG: {OrgName} with organization ID: {OrganizationID}.\n\n")
         time.sleep(2)
-        if len(orgresponse) > 1:                        #You can remove this section if you are sure of the ORG ID you want to use.
+        if len(orgresponse) > 1:                        
             logger.info("Other Possible ORGs returned from API Call include:") 
             for i, org in enumerate(orgresponse[1:], start=1): 
                 logger.info(f"{i}: {org['name']}")
             logger.info("Pausing to confirm. See README.MD for instructions on how to change the ORG. CTRL + C to Abort...")
             time.sleep(8)
         else:
-            logger.info("This is the only ORG ID found by the API call.")  #This is the end of the section that can be removed if you are sure of the ORG ID you want to use.
+            logger.info("This is the only ORG ID found by the API call.")  
         
         return OrganizationID, OrgName
     else:
