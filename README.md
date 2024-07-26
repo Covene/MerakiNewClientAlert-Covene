@@ -11,7 +11,7 @@ This script will utilize the Meraki API to pull network client data, then sorts 
     - Other third-party email servers would also be acceptable but will not be covered in this script. 
     - See reference guides below for instructions on how to configure the Azure integration.
 - You want to re-run the get network clients check every x minutes. (change the variable Sleeptime=x to change how long to wait between re-tries.) 
-- You have [environment variables](https://www.freecodecamp.org/news/python-env-vars-how-to-get-an-environment-variable-in-python/) configured, that store your Meraki API Key, and Azure communication resource string. 
+
 
 ## Instructions
  To use this script, you will  need to configure the following in Azure:
@@ -20,17 +20,19 @@ This script will utilize the Meraki API to pull network client data, then sorts 
 - A Verified Domain or free azure domain.
 - Obtain and store your Azure Communication Resource URL in the script.
 
-See the references at the bottom of this file to review instructions on creating azure communication resources and setting up a domain. 
 
-You may also use another Email solution, such as [Google's Gmail](https://mailtrap.io/blog/python-send-email-gmail/).
+See the references at the bottom of this file to review instructions on creating azure communication resources and setting up a domain. You may also use another Email solution, such as [Google's Gmail](https://mailtrap.io/blog/python-send-email-gmail/).
 
-
+### Setup
+- You will need to have two [environment variables](https://www.freecodecamp.org/news/python-env-vars-how-to-get-an-environment-variable-in-python/) configured, that store your Meraki API Key, and Azure communication resource string. In the script, the API has the following Environment Variables being called:
+    -"API_Key"
+    -"Azure Communication Resource"
  You will need to edit a few sections of this script for it to run, including:
 - API_Key=
 - Email Settings
-    - Your connection string is obtained from Azure- see Azure communication services email doc below.
+    - Your connection string is obtained from Azure- see Azure communication services email doc below. The value should look like: "endpoint=https://{_YourConnectionStringHere_}
         - connection_string=os.environ["Azure Communication Resource"] 
-    - Edit your sender address- replace DoNotReply@DOMAIN.com
+    - Edit your sender address- replace DoNotReply@DOMAIN.com with the domain you verify, or a free azure domain.
     - "to": [{"address": "ENTER EMAIL YOU WANT TO SEND TO HERE" }],
 
 ### Organizations
@@ -44,7 +46,7 @@ In the GetOrgID function, see the following section:
 
 To Change the ORG ID, run the script and you will be presented with the full list of ORG's available. Example:
 
-    The Script will continue for the following ORG: ORG0 with organization ID: 697526.
+    The Script will continue for the following ORG: ORG0 with organization ID: 55555.
 
 
     2024-07-19 14:17:59,630 - INFO - Other Possible ORGs returned from API Call include:
@@ -65,6 +67,20 @@ From the example above, the script will default to running the API request again
     if orgresponse:
             OrganizationID = orgresponse[7]["id"]
             OrgName = orgresponse[7]["name"]
+
+If you know you always want to run the script against the same ORG ID, it would be best to hardcode it with an environment variable. This avoids a potential issue that could occur; If your API Key gains or loses access to any Organizations, the script can switch to searching a different ORG ID without the configuration changing. An example of how you could hardcode your ORG:
+
+
+    def GetOrgID(logger):
+        OrganizationID = get_env_variable("OrganizationID", logger)
+        OrgName = "YourOrgName"
+        return OrganizationID, OrgName
+
+
+in the main() function, edit this section as follows. 
+
+    OrganizationID, OrgName = GetOrgID(logger)
+
 
 ### Networks
 The GetNetworkIDs function will show the networks that it is going to pull from. There is currently no mechanism to pick and chose the networks you want to be alerted on. This may change with future updates, but for now all networks are included. 
@@ -95,9 +111,9 @@ Finally, this script was built on python 3.
 The Get Network Clients script was created by a Network Engineer by trade, and not a python developer. As a result, while this code functions, there is room for improvements. Items that may be useful for this script include:
 - JSON files are created but not really required. They are there mosyly to provide you with the raw data from the API request. Feel free to tweak and remove the json files from being used. 
 - Update Mechanism: Implement a mechanism to check for updates or patches to dependencies, ensuring the script remains compatible with new versions of libraries.
-- As stated above, it may be more reliable to utilize windows task scheduler or cron jobs instead of the built in while true loop for continued monitoring of new clients.
 - At Times, you will get a random 503 error from Meraki when the dashoard does not respond in time, or if they are having issues. The script provided has no mechanism to re-start itself, or notify you that is has stopped running. 
 - There is no option to specify what networks you want to include or exclude. All networks in a meraki org will be included in the API currently. 
+- It may be more reliable to utilize windows task scheduler or cron jobs instead of the built in while true loop for continued monitoring of new clients.
 
 ## Custom Logging
 This script now also includes custom logging to track data historically. You must have the custom_logger.py to proceed without errors. You can add the file path to the file name if you want to store this in a specific location.This logging script will rotate automatically, and only store 3 backup files. 
