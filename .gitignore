@@ -2,3 +2,6 @@
 .DS_Store
 meraki_api__log__*
 *.json
+*.pyc
+*.log
+*.csv
