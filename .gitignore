@@ -5,3 +5,4 @@ meraki_api__log__*
 *.pyc
 *.log
 *.csv
+__pycache__/
