@@ -37,7 +37,7 @@ See the references at the bottom of this file to review instructions on creating
 
 
 ### Organizations
-If your API key has access to more than one organization, this script will by default choose the first returned Organization. 
+If your API key has access to one organization, this script will by default choose the first returned Organization. 
 
 If your API key has access to more than 1 organization, you will be prompted to select the ORG. Example:
 
