@@ -27,7 +27,7 @@ See the references at the bottom of this file to review instructions on creating
 - You will need to have two [environment variables](https://www.freecodecamp.org/news/python-env-vars-how-to-get-an-environment-variable-in-python/) configured, that store your Meraki API Key, and Azure communication resource string. In the script, the API has the following Environment Variables being called:
     -"API_Key"
     -"Azure Communication Resource"
- You will need to edit a few sections of this script for it to run, including:
+ You will need to edit a few sections of this script for it to run properly. See the app_config file. 
 - API_Key=
 - Email Settings
     - Your connection string is obtained from Azure- see Azure communication services email doc below. The value should look like: "endpoint=https://{_YourConnectionStringHere_}
