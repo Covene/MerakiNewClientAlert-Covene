@@ -23,16 +23,11 @@ def get_env_variable(var_name,logger):
         exit(1)
 
 logger = custom_logger.setup_logger('Meraki', 'Meraki-API-Logs.log')
-# UPDATE THESE TO MATCH YOUR ENVIRONMENT:
 API_Key = get_env_variable("API_Key", logger)
 csv_file_path = 'NewClients.csv'
 
 
-
-
-# Set up logging
 def setup_logger():
-    # Setup the logger
     logger = custom_logger.setup_logger('Meraki', 'Meraki-API-Logs.log')
     return logger
 
@@ -241,7 +236,7 @@ def FindNewClients(network_clients_data, csv_file_path,logger):
                             "Recent Device Name": client.get("recentDeviceName"),
                         }
                         NewClientInfo.append(client_info)
-                        logger.info(f"New client Detected. MAC: {client.get('mac')} Description: {client.get("description")}: First Seen:{readable_first_seen}")
+                        logger.info(f"New client detected at {network_name} MAC: {client.get('mac')} Description: {client.get("description")}: First Seen:{readable_first_seen}")
                         #Uncomment the 2 lines below to see a list of all clients, regardless of first connected date. This is useful for troubleshooting. 
                     #else: 
                         #logger.info(f"Client MAC: {client.get('mac')}First seen on: {readable_first_seen} is not today's date.")    
