@@ -39,68 +39,68 @@ See the references at the bottom of this file to review instructions on creating
 ### Organizations
 If your API key has access to more than one organization, this script will by default choose the first returned Organization. 
 
-In the GetOrgID function, see the following section:
+If your API key has access to more than 1 organization, you will be prompted to select the ORG. Example:
 
-    if orgresponse:
-            OrganizationID = orgresponse[0]["id"]
-            OrgName = orgresponse[0]["name"]
+    2024-12-05 14:50:06,932 - GetBSSID - INFO - Fetching organizations...
+    2024-12-05 14:50:07,685 - GetBSSID - INFO - Organizations fetched successfully.
 
-To Change the ORG ID, run the script and you will be presented with the full list of ORG's available. Example:
-
-    The Script will continue for the following ORG: ORG0 with organization ID: 55555.
-
-
-    2024-07-19 14:17:59,630 - INFO - Other Possible ORGs returned from API Call include:
-    2024-07-19 14:17:59,630 - INFO - 1: ORG0
-    2024-07-19 14:17:59,630 - INFO - 2: ORG1
-    2024-07-19 14:17:59,630 - INFO - 3: ORG2
-    2024-07-19 14:17:59,631 - INFO - 4: ORG3
-    2024-07-19 14:17:59,631 - INFO - 5: ORG4
-    2024-07-19 14:17:59,631 - INFO - 6: ORG5
-    2024-07-19 14:17:59,631 - INFO - 7: ORG6
-    2024-07-19 14:17:59,631 - INFO - 8: ORG7
-    2024-07-19 14:17:59,631 - INFO - 9: ORG8
-    2024-07-19 14:17:59,632 - INFO - 10: ORG9
-
-
-From the example above, the script will default to running the API request against Org0. If you wish to run the API call against Org7 for example, update the code as follows: 
-
-    if orgresponse:
-            OrganizationID = orgresponse[7]["id"]
-            OrgName = orgresponse[7]["name"]
-
-If you know you always want to run the script against the same ORG ID, it would be best to hardcode it with an environment variable. This avoids a potential issue that could occur; If your API Key gains or loses access to any Organizations, the script can switch to searching a different ORG ID without the configuration changing. An example of how you could hardcode your ORG:
-
-
-    def GetOrgID(logger):
-        OrganizationID = get_env_variable("OrganizationID", logger)
-        OrgName = "YourOrgName"
-        return OrganizationID, OrgName
-
-
-in the main() function, edit this section as follows. 
-
-    OrganizationID, OrgName = GetOrgID(logger)
-
+    Available Organizations:
+    0: Blue Wave Therapy (ID: 123456)
+    1: Quantum Dynamics Inc. (ID: 234567)
+    2: Apex Legal Partners (ID: 345678)
+    3: Orion Tech Solutions (ID: 456789)
+    4: GreenLeaf Environmental, LLC (ID: 567890)
+    5: NorthStar Brewing Co (ID: 987654321012345678)
+    6: Vertex Auto Management (ID: 876543210987654321)
+    7: Horizon Medical Logistics (ID: 123123123123123123)
+    8: Stellar Legal Associates (ID: 234234234234234234)
+    9: Zenith Facility Services (ID: 345345345345345345)
+    Enter the number of the organization to proceed: 9
+    2024-12-05 14:50:12,634 - GetBSSID - INFO - Getting network IDs for organization: Zenith Facility Services (ID: 345345345345345345)
+    2024-12-05 14:50:13,196 - GetBSSID - INFO - Fetched networks successfully.
 
 ### Networks
-The GetNetworkIDs function will show the networks that it is going to pull from. There is currently no mechanism to pick and chose the networks you want to be alerted on. This may change with future updates, but for now all networks are included. 
+The GetNetworkIDs function will show the networks that it is going to pull from. You will be prompted to select which networks to include in the BSSID output. Select option 1 to include all networks. Select option 2 to select specific networks to include, separated by a comma. For example, 0,2,4,6,8. Example:
+
+    Available Networks:
+    0: NY - Albany (ID: L_111111111111111111)
+    1: CA - Los Angeles (ID: L_222222222222222222)
+    2: TX - Austin (ID: L_333333333333333333)
+    3: FL - Miami (ID: L_444444444444444444)
+    4: CO - Denver (ID: L_555555555555555555)
+    5: IL - Chicago - HQ (ID: L_666666666666666666)
+    6: GA - Atlanta (ID: L_777777777777777777)
+    7: WA - Seattle (ID: L_888888888888888888)
+    8: OH - Cleveland (ID: L_999999999999999999)
+    9: WI - Madison (ID: L_000000000000000000)
+    10: NV - Las Vegas (ID: L_101010101010101010)
+    11: AR - Little Rock - SG360 (ID: L_202020202020202020)
+    12: WI - Green Bay - EcoClean (ID: L_303030303030303030)
+    13: MI - Detroit - Hi-Tec (ID: L_404040404040404040)
+    Options:
+    1: Include all networks.
+    2: Select specific networks by their indices (e.g., 0,2,4).
+    3: Abort.
+    Enter your choice (1, 2, or 3): 2
+    Enter the indices of the networks to include (comma-separated): 0,2,4,6,8
+    2024-12-05 14:50:22,659 - GetBSSID - INFO - Selected networks:
+    {
+        "L_111111111111111111": "NY - Albany",
+        "L_333333333333333333": "TX - Austin",
+        "L_555555555555555555": "CO - Denver",
+        "L_777777777777777777": "GA - Atlanta",
+        "L_999999999999999999": "OH - Cleveland"
+    }
 
 
 ### Exclude Guest Networks
-This cript has an Capibility to exclude clients that connect to guest networks. In the script, search for: 
-
-    if is_today and client.get("ssid") != "Guest!Network":
-
-Replace the "Guest!Network" with the name of the wireless guest network you would like to exclude from alerting. You can also exclude more than one guest network name by adding another and statment like so:
-
-    if is_today and client.get("ssid") != "Guest!Network" and client.get("ssid") != "GuestNetwork2":
+This script has an capability to exclude clients that connect to guest networks. Use the app_config file to edit this.
 
 
 ### Python Dependencies
 **Use pip install -r requirements.txt command to download each Python package**:
 
-Ensure you download the requirements.txt file, and then run pip install -r requirements.txt. Eack required package will be downloaded. The requirements.txt file contains all the packages used by the script. 
+Ensure you download the requirements.txt file, and then run pip install -r requirements.txt. Each required package will be downloaded. The requirements.txt file contains all the packages used by the script. 
 
 Please note that a [virtual environment](https://docs.python.org/3/library/venv.html) will help isolate package dependencies, and ensure each package is found by the IDE.
 
@@ -110,10 +110,9 @@ Finally, this script was built on python 3.
 
 ### Improvements To Be Made
 The Get Network Clients script was created by a Network Engineer by trade, and not a python developer. As a result, while this code functions, there is room for improvements. Items that may be useful for this script include:
-- JSON files are created but not really required. They are there mosyly to provide you with the raw data from the API request. Feel free to tweak and remove the json files from being used. 
+- JSON files are created but not really required. They are there mostly to provide you with the raw data from the API request. Feel free to tweak and remove the json files from being used. 
 - Update Mechanism: Implement a mechanism to check for updates or patches to dependencies, ensuring the script remains compatible with new versions of libraries.
-- At Times, you will get a random 503 error from Meraki when the dashoard does not respond in time, or if they are having issues. The script provided has no mechanism to re-start itself, or notify you that is has stopped running. 
-- There is no option to specify what networks you want to include or exclude. All networks in a meraki org will be included in the API currently. 
+- At Times, you will get a random 503 error from Meraki when the dashboard does not respond in time, or if they are having issues. The script provided has no mechanism to re-start itself, or notify you that is has stopped running. 
 - It may be more reliable to utilize windows task scheduler or cron jobs instead of the built in while true loop for continued monitoring of new clients.
 
 ## Custom Logging
