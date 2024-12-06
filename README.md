@@ -24,9 +24,11 @@ This script will utilize the Meraki API to pull network client data, then sorts 
 See the references at the bottom of this file to review instructions on creating azure communication resources and setting up a domain. You may also use another Email solution, such as [Google's Gmail](https://mailtrap.io/blog/python-send-email-gmail/).
 
 ### Setup
-- You will need to have two [environment variables](https://www.freecodecamp.org/news/python-env-vars-how-to-get-an-environment-variable-in-python/) configured, that store your Meraki API Key, and Azure communication resource string. In the script, the API has the following Environment Variables being called:
-    -"API_Key"
-    -"Azure Communication Resource"
+- You will need to have two [environment variables](https://www.freecodecamp.org/news/python-env-vars-how-to-get-an-environment-variable-in-python/) configured, that store your Meraki API Key, and Azure communication resource string. In the script, the API has the following Environment Variables Named:
+
+    - "API_Key"
+    - "Azure_Communication_Resource"
+
  You will need to edit a few sections of this script for it to run properly. See the app_config file. 
 - API_Key=
 - Email Settings
