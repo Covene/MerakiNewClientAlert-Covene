@@ -120,6 +120,8 @@ The Get Network Clients script was created by a Network Engineer by trade, and n
 - Update Mechanism: Implement a mechanism to check for updates or patches to dependencies, ensuring the script remains compatible with new versions of libraries.
 - At Times, you will get a random 503 error from Meraki when the dashboard does not respond in time, or if they are having issues. The script provided has no mechanism to re-start itself, or notify you that is has stopped running. 
 - It may be more reliable to utilize windows task scheduler or cron jobs instead of the built in while true loop for continued monitoring of new clients.
+- You may choose to hardcode your org and network IDs, so you do not require manual input to start the script.
+
 
 ## Custom Logging
 This script now also includes custom logging to track data historically. You must have the custom_logger.py to proceed without errors. You can add the file path to the file name if you want to store this in a specific location.This logging script will rotate automatically, and only store 3 backup files. 
