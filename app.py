@@ -262,7 +262,7 @@ def FindNewClients(network_clients_data, csv_file_path,logger):
 #This function will send an email with the new client data if the file size has increased. This requires an Azure Communication Resource to be set up. See Readme for more information.
 def EmailNewClients(csv_file_path, OrgName,logger):
     SenderAddress = app_config.SenderAddress
-
+    SendToAddress = app_config.SendToAddress
     with open(csv_file_path, "r") as file:
         file_contents = file.read()
 
@@ -274,7 +274,7 @@ def EmailNewClients(csv_file_path, OrgName,logger):
         message = {         
             "senderAddress": SenderAddress,
             "recipients":  { 
-                "to": [{"address": "UpdateEmailAddressHere@domain.com" }],
+                "to": [{"address": SendToAddress}],
             },
             "content": {
                 "subject": f"{OrgName} - New Client Connected To The Network",

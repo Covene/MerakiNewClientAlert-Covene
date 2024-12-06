@@ -1,7 +1,7 @@
 """Update the sender address for email notifications and the recipient address below."""
 
 SenderAddress = 'DoNotReply@domain.com'
-SentToAddress = 'UpdateEmailAddressHere@domain.com'
+SendToAddress = 'UpdateEmailAddressHere@domain.com'
 
 
 # Update the following variable with the name of the wireless network you want to exclude from alerting on.
