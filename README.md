@@ -21,21 +21,26 @@ This script will utilize the Meraki API to pull network client data, then sorts 
 - Obtain and store your Azure Communication Resource URL in the script.
 
 
-See the references at the bottom of this file to review instructions on creating azure communication resources and setting up a domain. You may also use another Email solution, such as [Google's Gmail](https://mailtrap.io/blog/python-send-email-gmail/).
+See the references below to review instructions on creating azure communication resources and setting up a domain. You may also use another Email solution, such as [Google's Gmail](https://mailtrap.io/blog/python-send-email-gmail/).
 
 ### Setup
-- You will need to have two [environment variables](https://www.freecodecamp.org/news/python-env-vars-how-to-get-an-environment-variable-in-python/) configured, that store your Meraki API Key, and Azure communication resource string. In the script, the API has the following Environment Variables Named:
+You will need to have two [environment variables](https://www.freecodecamp.org/news/python-env-vars-how-to-get-an-environment-variable-in-python/) configured, that store your Meraki API Key, and Azure communication resource string. In the script, the API has the following Environment Variables Named:
 
     - "API_Key"
     - "Azure_Communication_Resource"
 
- You will need to edit a few sections of this script for it to run properly. See the app_config file. 
-- API_Key=
-- Email Settings
-    - Your connection string is obtained from Azure- see Azure communication services email doc below. The value should look like: "endpoint=https://{_YourConnectionStringHere_}
-        - connection_string=os.environ["Azure Communication Resource"] 
-    - Edit your sender address- replace DoNotReply@DOMAIN.com with the domain you verify, or a free azure domain.
-    - "to": [{"address": "ENTER EMAIL YOU WANT TO SEND TO HERE" }],
+
+#### Azure Email Settings
+
+- Your connection string is obtained from Azure- see [Overview of Azure Communication Services email](https://learn.microsoft.com/en-us/azure/communication-services/concepts/email/email-overview). 
+- The value should look like this: 
+    
+    
+
+    endpoint=https://YourCommunication-Resource-URL.azure.com/AR6GGXGXVTVTXVT3roAR6GXVH79GXVGXVTT7GXVT5g==
+    
+      
+- Edit your sender address- replace DoNotReply@DOMAIN.com with the domain you verify, or a free azure domain.
 
 
 ### Organizations
@@ -47,16 +52,16 @@ If your API key has access to more than 1 organization, you will be prompted to 
     2024-12-05 14:50:07,685 - GetBSSID - INFO - Organizations fetched successfully.
 
     Available Organizations:
-    0: Blue Wave Therapy (ID: 123456)
-    1: Quantum Dynamics Inc. (ID: 234567)
-    2: Apex Legal Partners (ID: 345678)
-    3: Orion Tech Solutions (ID: 456789)
-    4: GreenLeaf Environmental, LLC (ID: 567890)
-    5: NorthStar Brewing Co (ID: 987654321012345678)
-    6: Vertex Auto Management (ID: 876543210987654321)
-    7: Horizon Medical Logistics (ID: 123123123123123123)
-    8: Stellar Legal Associates (ID: 234234234234234234)
-    9: Zenith Facility Services (ID: 345345345345345345)
+    0: Blue Wave (ID: 123456)
+    1: Quantum .(ID: 234567)
+    2: Apex (ID: 345678)
+    3: Orion Tech (ID: 456789)
+    4: GreenLeaf (ID: 567890)
+    5: NorthStar ID: 987654321012345678)
+    6: Vertex (ID: 876543210987654321)
+    7: Horizon (ID: 123123123123123123)
+    8: Stellar Associates (ID: 234234234234234234)
+    9: Zenith Facility (ID: 345345345345345345)
     Enter the number of the organization to proceed: 9
     2024-12-05 14:50:12,634 - GetBSSID - INFO - Getting network IDs for organization: Zenith Facility Services (ID: 345345345345345345)
     2024-12-05 14:50:13,196 - GetBSSID - INFO - Fetched networks successfully.
