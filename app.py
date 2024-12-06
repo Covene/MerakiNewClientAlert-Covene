@@ -270,7 +270,7 @@ def EmailNewClients(csv_file_path, OrgName,logger):
     file_bytes_b64 = base64.b64encode(bytes(file_contents, 'utf-8')).decode()
     logger.info(f'File change detected. Attempting to Send email...')
     try:
-        connection_string = get_env_variable("Azure Communication Resource",logger) #Ensure you have an environment variable called Azure Communication Resource. Restart your IDE after creating this in your environment.
+        connection_string = get_env_variable("Azure_Communication_Resource",logger) #Ensure you have an environment variable called Azure Communication Resource. Restart your IDE after creating this in your environment.
         client = EmailClient.from_connection_string(connection_string)
         message = {         
             "senderAddress": SenderAddress,

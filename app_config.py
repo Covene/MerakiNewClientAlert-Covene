@@ -18,7 +18,7 @@ Sleeptime = 300
 
 Please ensure the following environment variables are configured: 
 
-Azure Communication Resource
+Azure_Communication_Resource
 API_KEY
 
 """
