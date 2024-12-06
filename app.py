@@ -97,7 +97,6 @@ def GetOrgID(api_key, logger):
         except ValueError:
             print("Invalid input. Please enter a numeric index.")
 
-#Gets the Network ID's for the ORG ID that was returned from the GetOrgID function. This is required to run the GetNetworkClients function.
 def GetNetworkIDs(api_key, OrganizationID, OrgName, logger):
 
     logger.info(f"Getting network IDs for organization: {OrgName} (ID: {OrganizationID})")
@@ -219,9 +218,9 @@ def FindNewClients(network_clients_data, csv_file_path,logger):
                     first_seen_local = convert_to_local_time(first_seen_utc)
                     readable_first_seen = first_seen_local.strftime("%Y-%m-%d %H:%M:%S")
                     is_today = first_seen_local.date() == today_local
-                    #update your Guest Network Here
+                    
                     WirelessGuestNetworkToExclude = app_config.WirelessGuestNetworkToExclude
-                    if is_today and client.get("ssid") != WirelessGuestNetworkToExclude:
+                    if is_today and client.get("ssid") not in WirelessGuestNetworkToExclude:
                         client_info = {
                             "Network Name": network_name,
                             "Client ID": client.get("id"),
