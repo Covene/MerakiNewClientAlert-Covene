@@ -40,9 +40,10 @@ You will need to have two [environment variables](https://www.freecodecamp.org/n
     endpoint=https://YourCommunication-Resource-URL.azure.com/AR6GGXGXVTVTXVT3roAR6GXVH79GXVGXVTT7GXVT5g==
     
       
-- Edit your sender address- replace DoNotReply@DOMAIN.com with the domain you verify, or a free azure domain.
-
-
+- Edit your sender address in the app_config file. replace DoNotReply@DOMAIN.com with the domain you verify, or a free azure domain.
+-Edit your send to address in the app_config file.
+- Set the 'WirelessGuestNetworkToExclude' to exclude a specific wireless SSID from alerting. This is useful if you want to exclude guest network devices from sending alerts. 
+- Set the Sleeptime value in seconds to determine how often you want to refresh data from Meraki. 
 ### Organizations
 If your API key has access to one organization, this script proceed automatically for that Organization. 
 
@@ -100,8 +101,6 @@ The GetNetworkIDs function will show the networks that it is going to pull from.
     }
 
 
-### Exclude Guest Networks
-This script has an capability to exclude clients that connect to guest networks. Use the app_config file to edit this.
 
 
 ### Python Dependencies
