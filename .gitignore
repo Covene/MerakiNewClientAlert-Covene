@@ -6,4 +6,6 @@ meraki_api__log__*
 *.log
 *.csv
 __pycache__/
+/venv/
+
 OLD/
