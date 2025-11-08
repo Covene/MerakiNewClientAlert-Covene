@@ -18,7 +18,7 @@ This script will utilize the Meraki API to pull network client data, then sorts 
 - Communication Resource
 - Email Communication Resource
 - A Verified Domain or free azure domain.
-- Obtain and store your Azure Communication Resource URL in the script.
+- Obtain and store your Azure Communication Resource URL as an environment variable
 
 
 See the references below to review instructions on creating azure communication resources and setting up a domain. You may also use another Email solution, such as [Google's Gmail](https://mailtrap.io/blog/python-send-email-gmail/).
